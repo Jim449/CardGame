@@ -3,17 +3,20 @@ import tkinter
 
 
 class Field():
-    def __init__(self, root: tkinter.Tk, frame: ttk.Frame, player: int = 1, size: int = 6):
+    def __init__(self, main, frame: ttk.Frame, player: int = 1, size: int = 6):
 
-        self.root = root
-        self.player = player
-        self.cards = []
-        self.back_image = tkinter.PhotoImage(file="Card back.png")
+        self.main = main
+        self.root: tkinter.Tk = main.get_root()
+        self.player: int = player
+        self.cards: list[ttk.Button] = []
+        self.back_image: tkinter.PhotoImage = tkinter.PhotoImage(
+            file="Card back.png")
 
         for i in range(size):
             button = ttk.Button(
                 frame, image=self.back_image, command=lambda index=i: self.select(index))
             button.grid(column=i, row=0)
+            button.grid_forget()
             self.cards.append(button)
 
         self.popup = tkinter.Menu(frame)
