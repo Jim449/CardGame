@@ -18,7 +18,14 @@ class HandGUI():
             button["state"] = tkinter.DISABLED
             self.cards.append(button)
 
-    def populate(self, hand: Deck, observer: int) -> None:
-        for index, card in enumerate(hand.get_card_list()):
-            self.cards[index].config(card.get_miniature(observer))
-            self.cards[index]["state"] = tkinter.NORMAL
+    def update(self, hand: Deck, observer: int) -> None:
+        cards = hand.get_card_list()
+
+        for index in range(len(self.cards)):
+            if index < len(cards):
+                self.cards[index].config(
+                    image=cards[index].get_miniature(observer))
+                self.cards[index]["state"] = tkinter.NORMAL
+            else:
+                self.cards[index].config(image=self.empty_card)
+                self.cards[index]["state"] = tkinter.DISABLED

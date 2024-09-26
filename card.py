@@ -19,7 +19,7 @@ class Card:
     back_image: PhotoImage = None
     back_miniature: PhotoImage = None
 
-    def __init__(self, name: str, image: PhotoImage, miniature: PhotoImage, 
+    def __init__(self, name: str, image: PhotoImage, miniature: PhotoImage,
                  properties: dict[str, Any] = None) -> None:
         """Instantiates an ownerless card"""
         self.name: str = name
@@ -39,7 +39,8 @@ class Card:
 
     def give_to(self, player: int) -> Self:
         """Returns a copy of this card, with ownership set to player"""
-        copy: Card = Card(self.name, self.description)
+        copy: Card = Card(self.name, self.image,
+                          self.miniature, self.properties)
         copy.owner = player
         return copy
 
@@ -48,27 +49,40 @@ class Card:
         FACE-DOWN: visible to owner. HIDDEN: invisible to all"""
         self.visibility = visibility
 
-    def can_view(self, observer: int) -> bool:
+    def is_facedown(self):
+        return self.visibility == Card.FACE_DOWN or self.visibility == Card.HIDDEN
+
+    def can_view(self, observer: int, hide_face_down: bool = False) -> bool:
         """Returns true if the observer is authorized to view card front"""
-        if self.visibilty == 2 or observer == 0:
+        if self.visibility == Card.FACE_DOWN and hide_face_down:
+            return False
+        elif self.visibility == Card.FACE_UP or observer == Card.ALL_SEEING:
             return True
-        elif self.visibility == 1 and observer == self.owner:
+        elif self.visibility == Card.FACE_DOWN and observer == self.owner:
             return True
         else:
             return False
-        
-    def get_image(self, observer: int) -> PhotoImage:
+
+    def get_name(self, observer: int) -> str:
+        """Returns card name if observer has sufficient permissions.
+        Otherwise, returns 'Unknown card'."""
+        if self.can_view(observer):
+            return self.name
+        else:
+            return "Unknown card"
+
+    def get_image(self, observer: int, hide_face_down: bool = False) -> PhotoImage:
         """Returns card front if observer has sufficient permissions.
         Otherwise, returns card back."""
-        if self.can_view(observer):
+        if self.can_view(observer, hide_face_down):
             return self.image
         else:
             return self.back_image
 
-    def get_miniature(self, observer: int) -> PhotoImage:
+    def get_miniature(self, observer: int, hide_face_down: bool = False) -> PhotoImage:
         """Returns miniature card front if observer has sufficient permissions.
         Otherwise, returns miniature card back."""
-        if self.can_view(observer):
+        if self.can_view(observer, hide_face_down):
             return self.miniature
         else:
             return self.back_miniature
@@ -87,7 +101,7 @@ class Card:
     def get_equips(self, observer: int) -> list[Self]:
         """Returns equipped cards"""
         return self.equip_list
-    
+
     def equip_with(self, card: Self) -> None:
         """Equips another card to this card"""
         self.equip_list.append(card)
