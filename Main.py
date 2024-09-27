@@ -10,7 +10,8 @@ import transitions
 
 
 class Main():
-    def __init__(self, observer: int = 1):
+    def __init__(self, player: int = 1, observer: int = 1):
+        self.player: int = player
         self.observer: int = observer
         self.root: tkinter.Tk = tkinter.Tk()
         self.root.geometry("980x640+160+0")
@@ -18,6 +19,8 @@ class Main():
 
         self.selected_location: Deck = None
         self.selected_index: int = None
+        self.selected_card: Card = None
+        self.selected_gui = None
 
         self.empty_card: tkinter.PhotoImage = tkinter.PhotoImage(
             file="Large empty card.png")
@@ -77,18 +80,32 @@ class Main():
             self.option_frame, text="End turn", command=self.end_turn)
         self.end_turn_button.grid()
 
-        self.hand_menu = tkinter.Menu(self.root, background="black")
-        self.hand_menu.add_command(label="Play", command=self.play_card)
-        self.hand_menu.add_command(label="Set", command=self.set_card)
+        self.hand_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.hand_menu.add_command(label="Play",
+                                   command=lambda visibility=Card.FACE_UP: self.play_card(visibility))
+        self.hand_menu.add_command(label="Set",
+                                   command=lambda visibility=Card.FACE_DOWN: self.play_card(visibility))
+        self.hand_menu.add_command(label="Discard",
+                                   command=lambda: self.move_card("Discard"))
         # self.hand_menu.add_command(label="Equip", command=self.equip_card)
 
-        self.field_menu = tkinter.Menu(self.root, background="black")
-        self.field_menu.add_command(label="Attack", command=self.attack_with)
+        self.field_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.field_menu.add_command(label="Destroy",
+                                    command=lambda: self.move_card("Discard"))
+        self.field_menu.add_command(label="Return to hand",
+                                    command=lambda: self.move_card("Hand"))
         # self.field_menu.add_command(label="Activate equip 1", command=lambda equip=1: self.activate_equip(equip))
         # self.field_menu.add_command(label="Activate equip 2", command=lambda equip=2: self.activate_equip(equip))
         # self.field_menu.add_command(label="Activate equip 3", command=lambda equip=3: self.activate_equip(equip))
 
-        self.discard_menu = tkinter.Menu(self.root, background="black")
+        self.deck_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.deck_menu.add_command(label="Draw", command=self.draw_card)
+
+        self.discard_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
         self.discard_menu.add_command(
             label="Check", command=self.check_discard)
 
@@ -118,12 +135,16 @@ class Main():
 
     def end_turn(self) -> None:
         """Ends the turn by switching player. The turn player draws a card. Updates gui."""
-        if self.observer == 1:
-            self.observer = 2
+        if self.player == 1:
+            self.player = 2
+            if self.observer == 1:
+                self.observer = 2
             transitions.draw(origin=self.deck_2, destination=self.hand_2)
             self.deck_gui_2.update(self.deck_2, self.observer)
-        else:
-            self.observer = 1
+        elif self.player == 2:
+            self.player = 1
+            if self.observer == 2:
+                self.observer = 1
             transitions.draw(origin=self.deck_1, destination=self.hand_1)
             self.deck_gui_1.update(self.deck_1, self.observer)
 
@@ -202,59 +223,70 @@ class Main():
         self.field_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
+    def show_deck_menu(self) -> None:
+        self.deck_menu.tk_popup(
+            self.root.winfo_pointerx(), self.root.winfo_pointery())
+
     def show_discard_menu(self):
         self.discard_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
     def click_deck(self, name: str, player: int) -> None:
         """Views the top card of a deck and shows options for that deck."""
-        deck = self.get_deck(name, player)
-        self.view_card(deck.get_card(-1), self.observer)
+        self.selected_location = self.get_deck(name, player)
+        self.selected_card = self.selected_location.get_card(-1)
+        self.view_card(self.selected_card, self.observer)
+        self.selected_gui = self.get_gui("Deck", player)
 
-        if name == "Discard":
+        if name == "Deck":
+            self.show_deck_menu()
+        elif name == "Discard":
             self.show_discard_menu()
 
     def select_in_hand(self, player: int, index: int) -> None:
-        hand = self.get_deck("Hand", player)
-        self.view_card(hand.get_card(index), self.observer)
-
-        if player == self.observer:
-            self.selected_location = hand
-            self.selected_index = index
-            self.show_hand_menu()
+        self.selected_location = self.get_deck("Hand", player)
+        self.selected_index = index
+        self.selected_card = self.selected_location.get_card(index)
+        self.selected_gui = self.get_gui("Hand", player)
+        self.view_card(self.selected_card, self.observer)
+        self.show_hand_menu()
 
     def select_in_field(self, player: int, index: int) -> None:
-        field = self.get_deck("Field", player)
-        self.view_card(field.get_card(index), self.observer)
-
-        if player == self.observer:
-            self.selected_location = field
-            self.selected_index = index
-            self.show_field_menu()
+        self.selected_location = self.get_deck("Field", player)
+        self.selected_index = index
+        self.selected_card = self.selected_location.get_card(index)
+        self.selected_gui = self.get_gui("Field", player)
+        self.view_card(self.selected_card, self.observer)
+        self.show_field_menu()
 
     def check_discard(self) -> None:
         print("Dreadfully sorry! Discard pile checking hasn't been implemented yet!")
 
-    def play_card(self) -> None:
-        destination = self.get_deck("Field", self.observer)
+    def play_card(self, visibility: int) -> None:
+        destination = self.get_deck("Field", self.selected_card.owner)
+        if transitions.move_card(origin=self.selected_location, index=self.selected_index,
+                                 destination=destination, visibility=visibility):
+            self.selected_gui.update(
+                self.selected_location, self.observer)
+            self.get_gui("Field", self.selected_card.owner).update(
+                destination, self.observer)
+
+    def move_card(self, location: str) -> None:
+        destination = self.get_deck(location, self.selected_card.owner)
         if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                  destination=destination):
-            self.get_gui("Hand", self.observer).update(
+            self.selected_gui.update(
                 self.selected_location, self.observer)
-            self.get_gui("Field", self.observer).update(
+            self.get_gui(location, self.selected_card.owner).update(
                 destination, self.observer)
 
-    def set_card(self) -> None:
-        destination = self.get_deck("Field", self.observer)
-        if transitions.move_card(origin=self.selected_location, index=self.selected_index,
-                                 destination=destination, visibility=Card.FACE_DOWN):
-            self.get_gui("Hand", self.observer).update(
+    def draw_card(self) -> None:
+        destination = self.get_deck("Hand", self.selected_card.owner)
+        if transitions.draw(origin=self.selected_location, destination=destination):
+            self.selected_gui.update(
                 self.selected_location, self.observer)
-            self.get_gui("Field", self.observer).update(
+            self.get_gui("Hand", self.selected_card.owner).update(
                 destination, self.observer)
-
-    def attack_with(self) -> None:
-        print("There will be no violence here! At least not yet...")
 
 
 if __name__ == "__main__":
