@@ -6,6 +6,7 @@ from field import Field
 from hand_gui import HandGUI
 from deck_gui import DeckGUI
 from field_gui import FieldGUI
+from details_gui import DetailsGUI
 import transitions
 
 
@@ -22,6 +23,13 @@ class Main():
         self.selected_card: Card = None
         self.selected_gui = None
 
+        self.selected_action = ""
+        self.action_location: Deck = None
+        self.action_index: int = None
+        self.action_card: Card = None
+
+        # Full size cards: 174x264 (3x) Used to be 290x440px (5x)
+        # Miniature cards: 58x88px
         self.empty_card: tkinter.PhotoImage = tkinter.PhotoImage(
             file="Large empty card.png")
         self.empty_miniature: tkinter.PhotoImage = tkinter.PhotoImage(
@@ -65,12 +73,12 @@ class Main():
         self.discard_gui_2: DeckGUI = DeckGUI(
             self, self.hand_2_frame, name="Discard", column=7, player=2, empty_card=self.empty_miniature)
 
-        self.selected_card: ttk.Frame = ttk.Frame(
+        self.details_frame: ttk.Frame = ttk.Frame(
             self.root, width=290, height=440)
-        self.selected_card.grid(row=0, column=1, rowspan=3)
-        self.card_label: ttk.Label = ttk.Label(
-            self.selected_card, image=Card.back_image)
-        self.card_label.grid()
+        self.details_frame.grid_propagate(False)
+        self.details_frame.grid(row=0, column=1, rowspan=3)
+        self.details_gui = DetailsGUI(
+            self, self.details_frame, self.empty_card, self.empty_miniature)
 
         self.option_frame: ttk.Frame = ttk.Frame(
             self.root, width=290, height=160, style="TFrame")
@@ -88,7 +96,7 @@ class Main():
                                    command=lambda visibility=Card.FACE_DOWN: self.play_card(visibility))
         self.hand_menu.add_command(label="Discard",
                                    command=lambda: self.move_card("Discard"))
-        # self.hand_menu.add_command(label="Equip", command=self.equip_card)
+        self.hand_menu.add_command(label="Equip", command=self.prepare_equip)
 
         self.field_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -96,9 +104,7 @@ class Main():
                                     command=lambda: self.move_card("Discard"))
         self.field_menu.add_command(label="Return to hand",
                                     command=lambda: self.move_card("Hand"))
-        # self.field_menu.add_command(label="Activate equip 1", command=lambda equip=1: self.activate_equip(equip))
-        # self.field_menu.add_command(label="Activate equip 2", command=lambda equip=2: self.activate_equip(equip))
-        # self.field_menu.add_command(label="Activate equip 3", command=lambda equip=3: self.activate_equip(equip))
+        self.field_menu.add_command(label="Equip to", command=self.equip_card)
 
         self.deck_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -210,10 +216,7 @@ class Main():
     def view_card(self, card: Card, observer: int) -> None:
         """Views the full size image of a card. Depending on visibility and observer,
         views the card back. If card is none, views the empty card image."""
-        if card is None:
-            self.card_label.config(image=self.empty_card)
-        else:
-            self.card_label.config(image=card.get_image(observer))
+        self.details_gui.view_card(card, observer)
 
     def show_hand_menu(self) -> None:
         self.hand_menu.tk_popup(
@@ -259,6 +262,9 @@ class Main():
         self.view_card(self.selected_card, self.observer)
         self.show_field_menu()
 
+    def select_equip(self, index: int) -> None:
+        print(f"Selected equip card {index} of card {self.selected_card.name}")
+
     def check_discard(self) -> None:
         print("Dreadfully sorry! Discard pile checking hasn't been implemented yet!")
 
@@ -270,6 +276,7 @@ class Main():
                 self.selected_location, self.observer)
             self.get_gui("Field", self.selected_card.owner).update(
                 destination, self.observer)
+        self.selected_action = ""
 
     def move_card(self, location: str) -> None:
         destination = self.get_deck(location, self.selected_card.owner)
@@ -279,6 +286,25 @@ class Main():
                 self.selected_location, self.observer)
             self.get_gui(location, self.selected_card.owner).update(
                 destination, self.observer)
+        self.selected_action = ""
+
+    def prepare_equip(self):
+        print("Please select a card on the field which you want to equip.")
+        self.selected_action = "Equip"
+        self.action_location = self.selected_location
+        self.action_index = self.selected_index
+        self.action_card = self.selected_location.get_card(self.selected_index)
+
+    def equip_card(self):
+        if self.selected_action == "Equip":
+            transitions.equip_card_to(self.action_location, self.action_index,
+                                      self.selected_location, self.selected_index)
+            self.get_gui("Hand", self.action_card.owner).update(
+                self.action_location, self.observer)
+            self.get_gui("Field", self.selected_card.owner).update(
+                self.selected_location, self.observer)
+            self.details_gui.view_card(self.selected_card, self.observer)
+        self.selected_action = ""
 
     def draw_card(self) -> None:
         destination = self.get_deck("Hand", self.selected_card.owner)
@@ -287,6 +313,7 @@ class Main():
                 self.selected_location, self.observer)
             self.get_gui("Hand", self.selected_card.owner).update(
                 destination, self.observer)
+        self.selected_action = ""
 
 
 if __name__ == "__main__":

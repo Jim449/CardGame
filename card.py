@@ -98,9 +98,13 @@ class Card:
         self.target_list.append(target)
         target.targeted_by.append(self)
 
-    def get_equips(self, observer: int) -> list[Self]:
+    def get_equips(self) -> list[Self]:
         """Returns equipped cards"""
         return self.equip_list
+
+    def get_equip_count(self) -> int:
+        """Returns amount of cards equipped"""
+        return len(self.equip_list)
 
     def equip_with(self, card: Self) -> None:
         """Equips another card to this card"""
