@@ -18,5 +18,7 @@ class DeckGUI():
         self.deck["state"] = tkinter.DISABLED
 
     def update(self, deck: Deck, observer: int) -> None:
-        self.deck.config(image=deck.get_card(-1).get_miniature(observer))
-        self.deck["state"] = tkinter.NORMAL
+        card = deck.get_card(-1)
+        if card is not None:
+            self.deck.config(image=card.get_miniature(observer))
+            self.deck["state"] = tkinter.NORMAL

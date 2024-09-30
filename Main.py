@@ -22,11 +22,7 @@ class Main():
         self.selected_index: int = None
         self.selected_card: Card = None
         self.selected_gui = None
-
         self.selected_action = ""
-        self.action_location: Deck = None
-        self.action_index: int = None
-        self.action_card: Card = None
 
         # Full size cards: 174x264 (3x) Used to be 290x440px (5x)
         # Miniature cards: 58x88px
@@ -97,6 +93,12 @@ class Main():
         self.hand_menu.add_command(label="Discard",
                                    command=lambda: self.move_card("Discard"))
         self.hand_menu.add_command(label="Equip", command=self.prepare_equip)
+        self.hand_menu.add_command(label="Place on deck",
+                                   command=lambda: self.move_to_deck("Top"))
+        self.hand_menu.add_command(label="Insert under deck",
+                                   command=lambda: self.move_to_deck("Bottom"))
+        self.hand_menu.add_command(label="Shuffle into deck",
+                                   command=lambda: self.move_to_deck("Shuffle"))
 
         self.field_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -104,11 +106,12 @@ class Main():
                                     command=lambda: self.move_card("Discard"))
         self.field_menu.add_command(label="Return to hand",
                                     command=lambda: self.move_card("Hand"))
-        self.field_menu.add_command(label="Equip to", command=self.equip_card)
+        self.field_menu.add_command(label="Flip", command=self.flip_card)
 
         self.deck_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
         self.deck_menu.add_command(label="Draw", command=self.draw_card)
+        self.deck_menu.add_command(label="Shuffle", command=self.shuffle_deck)
 
         self.discard_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -230,7 +233,7 @@ class Main():
         self.deck_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
-    def show_discard_menu(self):
+    def show_discard_menu(self) -> None:
         self.discard_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
@@ -240,6 +243,7 @@ class Main():
         self.selected_card = self.selected_location.get_card(-1)
         self.view_card(self.selected_card, self.observer)
         self.selected_gui = self.get_gui("Deck", player)
+        self.selected_action = ""
 
         if name == "Deck":
             self.show_deck_menu()
@@ -247,20 +251,27 @@ class Main():
             self.show_discard_menu()
 
     def select_in_hand(self, player: int, index: int) -> None:
+        """Called when the user clicks a card in a hand"""
         self.selected_location = self.get_deck("Hand", player)
         self.selected_index = index
         self.selected_card = self.selected_location.get_card(index)
         self.selected_gui = self.get_gui("Hand", player)
         self.view_card(self.selected_card, self.observer)
         self.show_hand_menu()
+        self.selected_action = ""
 
     def select_in_field(self, player: int, index: int) -> None:
-        self.selected_location = self.get_deck("Field", player)
-        self.selected_index = index
-        self.selected_card = self.selected_location.get_card(index)
-        self.selected_gui = self.get_gui("Field", player)
-        self.view_card(self.selected_card, self.observer)
-        self.show_field_menu()
+        """Called when the user clicks a card in a field"""
+        if self.selected_action == "":
+            self.selected_location = self.get_deck("Field", player)
+            self.selected_index = index
+            self.selected_card = self.selected_location.get_card(index)
+            self.selected_gui = self.get_gui("Field", player)
+            self.view_card(self.selected_card, self.observer)
+            self.show_field_menu()
+        elif self.selected_action == "Equip":
+            self.equip_card("Field", player, index)
+        self.selected_action = ""
 
     def select_equip(self, index: int) -> None:
         print(f"Selected equip card {index} of card {self.selected_card.name}")
@@ -269,6 +280,7 @@ class Main():
         print("Dreadfully sorry! Discard pile checking hasn't been implemented yet!")
 
     def play_card(self, visibility: int) -> None:
+        """Moves a card to the field as either face-up or face-down"""
         destination = self.get_deck("Field", self.selected_card.owner)
         if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                  destination=destination, visibility=visibility):
@@ -276,44 +288,82 @@ class Main():
                 self.selected_location, self.observer)
             self.get_gui("Field", self.selected_card.owner).update(
                 destination, self.observer)
-        self.selected_action = ""
 
     def move_card(self, location: str) -> None:
+        """Moves a card from one location to another. Discards its equips"""
         destination = self.get_deck(location, self.selected_card.owner)
         if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                  destination=destination):
+            transitions.discard_equips(
+                self.selected_card, self.discard_1, self.discard_2)
             self.selected_gui.update(
                 self.selected_location, self.observer)
             self.get_gui(location, self.selected_card.owner).update(
                 destination, self.observer)
-        self.selected_action = ""
+            self.discard_gui_1.update(self.discard_1, self.observer)
+            self.discard_gui_2.update(self.discard_2, self.observer)
+
+    def move_to_deck(self, position: str = "Shuffle"):
+        """Moves a card to the deck.
+
+        Args:
+            position:
+                'Top', 'Bottom', or 'Shuffle'"""
+        destination = self.get_deck("Deck", self.selected_card.owner)
+        if position == "Top":
+            transitions.move_to_deck(self.selected_location, self.selected_index, destination,
+                                     target_index=-1)
+        elif position == "Bottom":
+            transitions.move_to_deck(self.selected_location, self.selected_index, destination,
+                                     target_index=0)
+        else:
+            transitions.move_to_deck(self.selected_location, self.selected_index, destination,
+                                     shuffle=True)
+        self.get_gui("Hand", self.selected_card.owner).update(
+            self.selected_location, self.observer)
+        self.get_gui("Deck", self.selected_card.owner).update(
+            destination, self.observer)
+
+    def shuffle_deck(self):
+        """Shuffles a deck"""
+        print("The deck was shuffled.")
+        self.selected_location.shuffle()
+
+    def flip_card(self):
+        """Changes card position between face up and face down"""
+        if self.selected_card.is_facedown():
+            self.selected_card.set_visibility(Card.FACE_UP)
+        else:
+            self.selected_card.set_visibility(Card.FACE_DOWN)
+        self.get_gui("Field", self.selected_card.owner).update(
+            self.selected_location, self.observer)
 
     def prepare_equip(self):
+        """Prepares a card to be equipped and waits for user to designate target"""
         print("Please select a card on the field which you want to equip.")
         self.selected_action = "Equip"
-        self.action_location = self.selected_location
-        self.action_index = self.selected_index
-        self.action_card = self.selected_location.get_card(self.selected_index)
 
-    def equip_card(self):
-        if self.selected_action == "Equip":
-            transitions.equip_card_to(self.action_location, self.action_index,
-                                      self.selected_location, self.selected_index)
-            self.get_gui("Hand", self.action_card.owner).update(
-                self.action_location, self.observer)
-            self.get_gui("Field", self.selected_card.owner).update(
-                self.selected_location, self.observer)
-            self.details_gui.view_card(self.selected_card, self.observer)
-        self.selected_action = ""
+    def equip_card(self, location: str, player: int, index: int):
+        """Equips the currently selected card to the card in the given location"""
+        destination = self.get_deck(location, player)
+        card = destination.get_card(index)
+
+        transitions.equip_card_to(self.selected_location, self.selected_index,
+                                  destination, index)
+        self.get_gui("Hand", self.selected_card.owner).update(
+            self.selected_location, self.observer)
+        self.get_gui("Field", card.owner).update(
+            self.destination, self.observer)
+        self.details_gui.view_card(card, self.observer)
 
     def draw_card(self) -> None:
+        """Draws a card from a deck to a hand"""
         destination = self.get_deck("Hand", self.selected_card.owner)
         if transitions.draw(origin=self.selected_location, destination=destination):
             self.selected_gui.update(
                 self.selected_location, self.observer)
             self.get_gui("Hand", self.selected_card.owner).update(
                 destination, self.observer)
-        self.selected_action = ""
 
 
 if __name__ == "__main__":

@@ -29,6 +29,14 @@ class Field(Deck):
                 return True
         return False
 
+    def insert_card(self, card: Card, index: int) -> bool:
+        """Refrains from inserting a card and returns false"""
+        return False
+
+    def shuffle(self) -> bool:
+        """Refrains from shuffling cards and returns false"""
+        return False
+
     def remove_card(self, index: int) -> Card:
         """Removes a card at index and returns it."""
         try:

@@ -1,4 +1,5 @@
 from card import Card
+import random
 
 
 class Deck:
@@ -21,11 +22,17 @@ class Deck:
             self.content.append(card)
         else:
             return False
-        
+
         if self.visibility == Card.FLEXIBLE:
             card.set_visibility(visibility)
         else:
             card.set_visibility(self.visibility)
+        return True
+
+    def insert_card(self, card: Card, index: int) -> bool:
+        """Inserts a card into the given position"""
+        self.content.insert(index, card)
+        card.set_visibility(self.visibility)
         return True
 
     def get_card(self, index: int) -> Card | None:
@@ -56,6 +63,7 @@ class Deck:
         return len(self.content)
 
     def get_card_list(self) -> list[Card]:
+        """Returns the decks contents"""
         return self.content
 
     def has_space(self) -> bool:
@@ -66,3 +74,8 @@ class Deck:
             return True
         else:
             return False
+
+    def shuffle(self) -> bool:
+        """Shuffles the deck"""
+        random.shuffle(self.content)
+        return True
