@@ -102,6 +102,10 @@ class Card:
         """Returns equipped cards"""
         return self.equip_list
 
+    def get_equip(self, index: int) -> Self:
+        """Returns an equipped card"""
+        return self.equip_list[index]
+
     def get_equip_count(self) -> int:
         """Returns amount of cards equipped"""
         return len(self.equip_list)

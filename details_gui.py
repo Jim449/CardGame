@@ -40,3 +40,6 @@ class DetailsGUI():
                 else:
                     self.equips[i].config(image=self.empty_miniature)
                     self.equips[i]["state"] = tkinter.DISABLED
+
+    def view_equip(self, card: Card, observer: int) -> None:
+        self.card_label.config(image=card.get_image(observer))

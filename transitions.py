@@ -18,6 +18,12 @@ def move_card(origin: Deck | Field, index: int, destination: Deck | Field, visib
         return False
 
 
+def move_equip(equip: Card, destination: Deck) -> bool:
+    """Moves an equip card to a deck"""
+    equip.unequip()
+    return destination.add_card(equip)
+
+
 def discard_equips(holder: Card, discard_1: Deck, discard_2: Deck) -> None:
     """Discards all equip cards of the holder card to their appropriate discard piles.
 

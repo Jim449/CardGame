@@ -20,6 +20,7 @@ class Main():
 
         self.selected_location: Deck = None
         self.selected_index: int = None
+        self.selected_equip: Card = None
         self.selected_card: Card = None
         self.selected_gui = None
         self.selected_action = ""
@@ -117,6 +118,13 @@ class Main():
             self.root, background="black", foreground="white")
         self.discard_menu.add_command(
             label="Check", command=self.check_discard)
+
+        self.equip_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.equip_menu.add_command(
+            label="Unequip", command=lambda: self.unequip_card("Hand"))
+        self.equip_menu.add_command(
+            label="Destroy", command=lambda: self.unequip_card("Discard"))
 
     def create_frame(self, row: int, column: int, style="TFrame") -> ttk.Frame:
         """Creates a frame to hold a player hand or field"""
@@ -218,8 +226,13 @@ class Main():
 
     def view_card(self, card: Card, observer: int) -> None:
         """Views the full size image of a card. Depending on visibility and observer,
-        views the card back. If card is none, views the empty card image."""
+        views the card back. Views equipped cards. If card is none, views the empty card image."""
         self.details_gui.view_card(card, observer)
+
+    def view_equip(self, card: Card, observer: int) -> None:
+        """Views the full size image of an equip card. Depending on visibility and observer,
+        views card back. The equip card view is left unchanged."""
+        self.details_gui.view_equip(card, observer)
 
     def show_hand_menu(self) -> None:
         self.hand_menu.tk_popup(
@@ -235,6 +248,10 @@ class Main():
 
     def show_discard_menu(self) -> None:
         self.discard_menu.tk_popup(
+            self.root.winfo_pointerx(), self.root.winfo_pointery())
+
+    def show_equip_menu(self) -> None:
+        self.equip_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
     def click_deck(self, name: str, player: int) -> None:
@@ -271,10 +288,16 @@ class Main():
             self.show_field_menu()
         elif self.selected_action == "Equip":
             self.equip_card("Field", player, index)
+            self.selected_location = self.get_deck("Field", player)
+            self.selected_index = index
+            self.selected_card = self.selected_location.get_card(index)
         self.selected_action = ""
 
     def select_equip(self, index: int) -> None:
-        print(f"Selected equip card {index} of card {self.selected_card.name}")
+        """Selects a card equipped to another card"""
+        self.selected_equip = self.selected_card.get_equip(index)
+        self.details_gui.view_equip(self.selected_equip, self.observer)
+        self.show_equip_menu()
 
     def check_discard(self) -> None:
         print("Dreadfully sorry! Discard pile checking hasn't been implemented yet!")
@@ -353,8 +376,22 @@ class Main():
         self.get_gui("Hand", self.selected_card.owner).update(
             self.selected_location, self.observer)
         self.get_gui("Field", card.owner).update(
-            self.destination, self.observer)
+            destination, self.observer)
         self.details_gui.view_card(card, self.observer)
+
+    def unequip_card(self, location: str) -> None:
+        """Unequips a card and moves it to a location"""
+        destination = self.get_deck(location, self.selected_equip.owner)
+        transitions.move_equip(self.selected_equip, destination)
+        self.details_gui.view_card(self.selected_card, self.observer)
+        self.get_gui(location, self.selected_equip.owner).update(
+            destination, self.observer)
+        # Needed, since the number of equips a card has is shown on field
+        # I can't do self.selected_equip.owner to find correct field
+        # Instead, get field of card which was equipped
+        # But I'm too lazy for that now, just update both fields
+        self.get_gui("Field", 1).update(self.field_1, self.observer)
+        self.get_gui("Field", 2).update(self.field_2, self.observer)
 
     def draw_card(self) -> None:
         """Draws a card from a deck to a hand"""
