@@ -4,11 +4,13 @@ from deck import Deck
 
 
 class HandGUI():
-    def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage, player: int, size: int = 6):
+    def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage,
+                 player: int, hand: Deck, size: int = 6):
 
         self.player: int = player
         self.cards: list[ttk.Button] = []
         self.empty_card = empty_card
+        self.hand = hand
 
         for i in range(size):
             button = ttk.Button(
@@ -18,8 +20,8 @@ class HandGUI():
             button["state"] = tkinter.DISABLED
             self.cards.append(button)
 
-    def update(self, hand: Deck, observer: int) -> None:
-        cards = hand.get_card_list()
+    def update(self, observer: int) -> None:
+        cards = self.hand.get_card_list()
 
         for index in range(len(self.cards)):
             if index < len(cards):

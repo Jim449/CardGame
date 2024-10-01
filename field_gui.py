@@ -4,11 +4,13 @@ from field import Field
 
 
 class FieldGUI():
-    def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage, player: int, size: int = 6):
+    def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage,
+                 player: int, field: Field, size: int = 6):
 
         self.player: int = player
         self.cards: list[ttk.Button] = []
         self.empty_card = empty_card
+        self.field = field
 
         for i in range(size):
             button = ttk.Button(
@@ -18,8 +20,8 @@ class FieldGUI():
             button["state"] = tkinter.DISABLED
             self.cards.append(button)
 
-    def update(self, field: Field, observer: int) -> None:
-        for index, card in enumerate(field.get_card_list()):
+    def update(self, observer: int) -> None:
+        for index, card in enumerate(self.field.get_card_list()):
             if card is not None:
                 self.cards[index].config(
                     image=card.get_miniature(observer, hide_face_down=True))

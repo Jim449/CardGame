@@ -54,21 +54,29 @@ class Main():
         self.discard_2: Deck = Deck(Card.FACE_UP)
 
         self.hand_gui_1: HandGUI = HandGUI(
-            self, self.hand_1_frame, player=1, size=6, empty_card=self.empty_miniature)
+            self, self.hand_1_frame, player=1, size=6,
+            hand=self.hand_1, empty_card=self.empty_miniature)
         self.hand_gui_2: HandGUI = HandGUI(
-            self, self.hand_2_frame, player=2, size=6, empty_card=self.empty_miniature)
+            self, self.hand_2_frame, player=2, size=6,
+            hand=self.hand_2, empty_card=self.empty_miniature)
         self.field_gui_1: FieldGUI = FieldGUI(
-            self, self.field_1_frame, player=1, size=6, empty_card=self.empty_miniature)
+            self, self.field_1_frame, player=1, size=6,
+            field=self.field_1, empty_card=self.empty_miniature)
         self.field_gui_2: FieldGUI = FieldGUI(
-            self, self.field_2_frame, player=2, size=6, empty_card=self.empty_miniature)
+            self, self.field_2_frame, player=2, size=6,
+            field=self.field_2, empty_card=self.empty_miniature)
         self.deck_gui_1: DeckGUI = DeckGUI(self, self.hand_1_frame, name="Deck",
-                                           column=7, player=1, empty_card=self.empty_miniature)
+                                           column=7, player=1,
+                                           deck=self.deck_1, empty_card=self.empty_miniature)
         self.deck_gui_2: DeckGUI = DeckGUI(self, self.hand_2_frame, name="Deck",
-                                           column=0, player=2, empty_card=self.empty_miniature)
+                                           column=0, player=2,
+                                           deck=self.deck_2, empty_card=self.empty_miniature)
         self.discard_gui_1: DeckGUI = DeckGUI(
-            self, self.hand_1_frame, name="Discard", column=0, player=1, empty_card=self.empty_miniature)
+            self, self.hand_1_frame, name="Discard", column=0, player=1,
+            deck=self.discard_1, empty_card=self.empty_miniature)
         self.discard_gui_2: DeckGUI = DeckGUI(
-            self, self.hand_2_frame, name="Discard", column=7, player=2, empty_card=self.empty_miniature)
+            self, self.hand_2_frame, name="Discard", column=7, player=2,
+            deck=self.discard_2, empty_card=self.empty_miniature)
 
         self.details_frame: ttk.Frame = ttk.Frame(
             self.root, width=290, height=440)
@@ -142,13 +150,13 @@ class Main():
             self.deck_1.add_card(sample_card.give_to(1))
             self.deck_2.add_card(sample_card.give_to(2))
 
-        self.deck_gui_1.update(self.deck_1, self.observer)
-        self.deck_gui_2.update(self.deck_2, self.observer)
+        self.deck_gui_1.update(self.observer)
+        self.deck_gui_2.update(self.observer)
 
         transitions.draw(origin=self.deck_1, destination=self.hand_1, amount=6)
         transitions.draw(origin=self.deck_2, destination=self.hand_2, amount=5)
-        self.hand_gui_1.update(self.hand_1, self.observer)
-        self.hand_gui_2.update(self.hand_2, self.observer)
+        self.hand_gui_1.update(self.observer)
+        self.hand_gui_2.update(self.observer)
 
     def end_turn(self) -> None:
         """Ends the turn by switching player. The turn player draws a card. Updates gui."""
@@ -157,18 +165,18 @@ class Main():
             if self.observer == 1:
                 self.observer = 2
             transitions.draw(origin=self.deck_2, destination=self.hand_2)
-            self.deck_gui_2.update(self.deck_2, self.observer)
+            self.deck_gui_2.update(self.observer)
         elif self.player == 2:
             self.player = 1
             if self.observer == 2:
                 self.observer = 1
             transitions.draw(origin=self.deck_1, destination=self.hand_1)
-            self.deck_gui_1.update(self.deck_1, self.observer)
+            self.deck_gui_1.update(self.observer)
 
-        self.hand_gui_1.update(self.hand_1, self.observer)
-        self.hand_gui_2.update(self.hand_2, self.observer)
-        self.field_gui_1.update(self.field_1, self.observer)
-        self.field_gui_2.update(self.field_2, self.observer)
+        self.hand_gui_1.update(self.observer)
+        self.hand_gui_2.update(self.observer)
+        self.field_gui_1.update(self.observer)
+        self.field_gui_2.update(self.observer)
 
     def get_deck(self, name: str, player: int) -> Deck:
         """Returns a deck or field associated with name and player.
@@ -307,10 +315,9 @@ class Main():
         destination = self.get_deck("Field", self.selected_card.owner)
         if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                  destination=destination, visibility=visibility):
-            self.selected_gui.update(
-                self.selected_location, self.observer)
+            self.selected_gui.update(self.observer)
             self.get_gui("Field", self.selected_card.owner).update(
-                destination, self.observer)
+                self.observer)
 
     def move_card(self, location: str) -> None:
         """Moves a card from one location to another. Discards its equips"""
@@ -319,12 +326,11 @@ class Main():
                                  destination=destination):
             transitions.discard_equips(
                 self.selected_card, self.discard_1, self.discard_2)
-            self.selected_gui.update(
-                self.selected_location, self.observer)
+            self.selected_gui.update(self.observer)
             self.get_gui(location, self.selected_card.owner).update(
-                destination, self.observer)
-            self.discard_gui_1.update(self.discard_1, self.observer)
-            self.discard_gui_2.update(self.discard_2, self.observer)
+                self.observer)
+            self.discard_gui_1.update(self.observer)
+            self.discard_gui_2.update(self.observer)
 
     def move_to_deck(self, position: str = "Shuffle"):
         """Moves a card to the deck.
@@ -342,10 +348,8 @@ class Main():
         else:
             transitions.move_to_deck(self.selected_location, self.selected_index, destination,
                                      shuffle=True)
-        self.get_gui("Hand", self.selected_card.owner).update(
-            self.selected_location, self.observer)
-        self.get_gui("Deck", self.selected_card.owner).update(
-            destination, self.observer)
+        self.get_gui("Hand", self.selected_card.owner).update(self.observer)
+        self.get_gui("Deck", self.selected_card.owner).update(self.observer)
 
     def shuffle_deck(self):
         """Shuffles a deck"""
@@ -358,8 +362,7 @@ class Main():
             self.selected_card.set_visibility(Card.FACE_UP)
         else:
             self.selected_card.set_visibility(Card.FACE_DOWN)
-        self.get_gui("Field", self.selected_card.owner).update(
-            self.selected_location, self.observer)
+        self.get_gui("Field", self.selected_card.owner).update(self.observer)
 
     def prepare_equip(self):
         """Prepares a card to be equipped and waits for user to designate target"""
@@ -373,10 +376,8 @@ class Main():
 
         transitions.equip_card_to(self.selected_location, self.selected_index,
                                   destination, index)
-        self.get_gui("Hand", self.selected_card.owner).update(
-            self.selected_location, self.observer)
-        self.get_gui("Field", card.owner).update(
-            destination, self.observer)
+        self.get_gui("Hand", self.selected_card.owner).update(self.observer)
+        self.get_gui("Field", card.owner).update(self.observer)
         self.details_gui.view_card(card, self.observer)
 
     def unequip_card(self, location: str) -> None:
@@ -384,23 +385,18 @@ class Main():
         destination = self.get_deck(location, self.selected_equip.owner)
         transitions.move_equip(self.selected_equip, destination)
         self.details_gui.view_card(self.selected_card, self.observer)
-        self.get_gui(location, self.selected_equip.owner).update(
-            destination, self.observer)
-        # Needed, since the number of equips a card has is shown on field
-        # I can't do self.selected_equip.owner to find correct field
-        # Instead, get field of card which was equipped
-        # But I'm too lazy for that now, just update both fields
-        self.get_gui("Field", 1).update(self.field_1, self.observer)
-        self.get_gui("Field", 2).update(self.field_2, self.observer)
+        self.get_gui(location, self.selected_equip.owner).update(self.observer)
+        # Not sure which field to update so just update both
+        self.get_gui("Field", 1).update(self.observer)
+        self.get_gui("Field", 2).update(self.observer)
 
     def draw_card(self) -> None:
         """Draws a card from a deck to a hand"""
         destination = self.get_deck("Hand", self.selected_card.owner)
         if transitions.draw(origin=self.selected_location, destination=destination):
-            self.selected_gui.update(
-                self.selected_location, self.observer)
+            self.selected_gui.update(self.observer)
             self.get_gui("Hand", self.selected_card.owner).update(
-                destination, self.observer)
+                self.observer)
 
 
 if __name__ == "__main__":
