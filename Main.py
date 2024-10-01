@@ -7,6 +7,7 @@ from hand_gui import HandGUI
 from deck_gui import DeckGUI
 from field_gui import FieldGUI
 from details_gui import DetailsGUI
+from deck_scrutinize_gui import DeckScrutinizeGUI
 import transitions
 
 
@@ -15,7 +16,7 @@ class Main():
         self.player: int = player
         self.observer: int = observer
         self.root: tkinter.Tk = tkinter.Tk()
-        self.root.geometry("980x640+160+0")
+        self.root.geometry("960x640+160+0")
         self.root.resizable(False, False)
 
         self.selected_location: Deck = None
@@ -77,9 +78,11 @@ class Main():
         self.discard_gui_2: DeckGUI = DeckGUI(
             self, self.hand_2_frame, name="Discard", column=7, player=2,
             deck=self.discard_2, empty_card=self.empty_miniature)
+        self.scrutinize_discard: DeckScrutinizeGUI = DeckScrutinizeGUI(
+            self, self.root, name="Discard", empty_card=self.empty_miniature)
 
         self.details_frame: ttk.Frame = ttk.Frame(
-            self.root, width=290, height=440)
+            self.root, width=290, height=480)
         self.details_frame.grid_propagate(False)
         self.details_frame.grid(row=0, column=1, rowspan=3)
         self.details_gui = DetailsGUI(
@@ -308,7 +311,8 @@ class Main():
         self.show_equip_menu()
 
     def check_discard(self) -> None:
-        print("Dreadfully sorry! Discard pile checking hasn't been implemented yet!")
+        self.scrutinize_discard.update(
+            self.get_deck("Discard", self.selected_card.owner), self.observer)
 
     def play_card(self, visibility: int) -> None:
         """Moves a card to the field as either face-up or face-down"""
