@@ -26,15 +26,16 @@ class Main():
         self.selected_gui = None
         self.selected_action = ""
 
-        # Full size cards: 174x264 (3x) Used to be 290x440px (5x)
+        # Full size cards: 232x352 (4x)
         # Miniature cards: 58x88px
         self.empty_card: tkinter.PhotoImage = tkinter.PhotoImage(
-            file="Large empty card.png")
+            file="Card images/Empty card.png")
         self.empty_miniature: tkinter.PhotoImage = tkinter.PhotoImage(
-            file="Empty card.png")
+            file="Card miniatures/Empty card miniature.png")
 
-        Card.back_image = tkinter.PhotoImage(file="Large card back.png")
-        Card.back_miniature = tkinter.PhotoImage(file="Card back.png")
+        Card.back_image = tkinter.PhotoImage(file="Card images/Card back.png")
+        Card.back_miniature = tkinter.PhotoImage(
+            file="Card miniatures/Card back miniature.png")
 
         style = ttk.Style()
         style.configure("TFrame", background="black")
@@ -53,6 +54,15 @@ class Main():
         self.deck_2: Deck = Deck(Card.HIDDEN)
         self.discard_1: Deck = Deck(Card.FACE_UP)
         self.discard_2: Deck = Deck(Card.FACE_UP)
+        self.active_1: Field = Field(Card.FLEXIBLE, 1)
+        self.active_2: Field = Field(Card.FLEXIBLE, 1)
+        self.area_1: Field = Field(Card.FLEXIBLE, 1)
+        self.area_2: Field = Field(Card.FLEXIBLE, 1)
+
+        self.all_decks = {"Hand1": self.hand_1, "Hand2": self.hand_2, "Field1": self.field_1,
+                          "Field2": self.field_2, "Deck1": self.deck_1, "Deck2": self.deck_2,
+                          "Discard1": self.discard_1, "Discard2": self.discard_2, "Active1": self.active_1,
+                          "Active2": self.active_2, "Area1": self.area_1, "Area2": self.area_2}
 
         self.hand_gui_1: HandGUI = HandGUI(
             self, self.hand_1_frame, player=1, size=6,
@@ -60,24 +70,47 @@ class Main():
         self.hand_gui_2: HandGUI = HandGUI(
             self, self.hand_2_frame, player=2, size=6,
             hand=self.hand_2, empty_card=self.empty_miniature)
+
         self.field_gui_1: FieldGUI = FieldGUI(
-            self, self.field_1_frame, player=1, size=6,
+            self, self.field_1_frame, name="Field", player=1, size=6,
             field=self.field_1, empty_card=self.empty_miniature)
         self.field_gui_2: FieldGUI = FieldGUI(
-            self, self.field_2_frame, player=2, size=6,
+            self, self.field_2_frame, name="Field", player=2, size=6,
             field=self.field_2, empty_card=self.empty_miniature)
+
         self.deck_gui_1: DeckGUI = DeckGUI(self, self.hand_1_frame, name="Deck",
                                            column=7, player=1,
                                            deck=self.deck_1, empty_card=self.empty_miniature)
         self.deck_gui_2: DeckGUI = DeckGUI(self, self.hand_2_frame, name="Deck",
                                            column=0, player=2,
                                            deck=self.deck_2, empty_card=self.empty_miniature)
+
         self.discard_gui_1: DeckGUI = DeckGUI(
             self, self.hand_1_frame, name="Discard", column=0, player=1,
             deck=self.discard_1, empty_card=self.empty_miniature)
         self.discard_gui_2: DeckGUI = DeckGUI(
             self, self.hand_2_frame, name="Discard", column=7, player=2,
             deck=self.discard_2, empty_card=self.empty_miniature)
+
+        self.active_gui_1: FieldGUI = FieldGUI(
+            self, self.field_1_frame, name="Active", empty_card=self.empty_miniature,
+            player=1, field=self.active_1, size=1, padding=20, grid_start=0)
+        self.active_gui_2: FieldGUI = FieldGUI(
+            self, self.field_2_frame, name="Active", empty_card=self.empty_miniature,
+            player=2, field=self.active_2, size=1, padding=20, grid_start=0)
+
+        self.area_gui_1: FieldGUI = FieldGUI(
+            self, self.field_1_frame, name="Area", empty_card=self.empty_miniature,
+            player=1, field=self.area_1, size=1, padding=20, grid_start=7)
+        self.area_gui_2: FieldGUI = FieldGUI(
+            self, self.field_2_frame, name="Area", empty_card=self.empty_miniature,
+            player=2, field=self.area_2, size=1, padding=20, grid_start=7)
+
+        self.all_guis = {"Hand1": self.hand_gui_1, "Hand2": self.hand_gui_2, "Field1": self.field_gui_1,
+                         "Field2": self.field_gui_2, "Deck1": self.deck_gui_1, "Deck2": self.deck_gui_2,
+                         "Discard1": self.discard_gui_1, "Discard2": self.discard_gui_2, "Active1": self.active_gui_1,
+                         "Active2": self.active_gui_2, "Area1": self.area_gui_1, "Area2": self.area_gui_2}
+
         self.scrutinize_discard: DeckScrutinizeGUI = DeckScrutinizeGUI(
             self, self.root, name="Discard", empty_card=self.empty_miniature)
 
@@ -120,6 +153,14 @@ class Main():
                                     command=lambda: self.move_card("Hand"))
         self.field_menu.add_command(label="Flip", command=self.flip_card)
 
+        self.active_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.active_menu.add_command(label="Destroy",
+                                     command=lambda: self.move_card("Discard"))
+        self.active_menu.add_command(label="Return to hand",
+                                     command=lambda: self.move_card("Hand"))
+        self.active_menu.add_command(label="Flip", command=self.flip_card)
+
         self.deck_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
         self.deck_menu.add_command(label="Draw", command=self.draw_card)
@@ -147,15 +188,29 @@ class Main():
 
     def test_setup(self) -> None:
         """Adds sample cards to both decks and draws starting hands"""
-        sample_card = Card("Sample card", tkinter.PhotoImage(file="Large sample card.png"),
-                           tkinter.PhotoImage(file="Sample card.png"))
-        for i in range(30):
-            self.deck_1.add_card(sample_card.give_to(1))
-            self.deck_2.add_card(sample_card.give_to(2))
+        cat = Card("Black cat", tkinter.PhotoImage(file="Card images/Black cat.png"),
+                   tkinter.PhotoImage(file="Card miniatures/Black cat miniature.png"))
+        hound = Card("Black hound", tkinter.PhotoImage(file="Card images/Black hound.png"),
+                     tkinter.PhotoImage(file="Card miniatures/Black hound miniature.png"))
+        remains = Card("Burning remains", tkinter.PhotoImage(file="Card images/Burning remains.png"),
+                       tkinter.PhotoImage(file="Card miniatures/Burning remains miniature.png"))
+        drowned = Card("Drowned soul", tkinter.PhotoImage(file="Card images/Drowned soul.png"),
+                       tkinter.PhotoImage(file="Card miniatures/Drowned soul miniature.png"))
 
+        for i in range(10):
+            self.deck_1.add_card(cat.give_to(1))
+            self.deck_1.add_card(hound.give_to(1))
+            self.deck_1.add_card(remains.give_to(1))
+            self.deck_1.add_card(drowned.give_to(1))
+            self.deck_2.add_card(cat.give_to(2))
+            self.deck_2.add_card(hound.give_to(2))
+            self.deck_2.add_card(remains.give_to(2))
+            self.deck_2.add_card(drowned.give_to(2))
+
+        self.deck_1.shuffle()
+        self.deck_2.shuffle()
         self.deck_gui_1.update(self.observer)
         self.deck_gui_2.update(self.observer)
-
         transitions.draw(origin=self.deck_1, destination=self.hand_1, amount=6)
         transitions.draw(origin=self.deck_2, destination=self.hand_2, amount=5)
         self.hand_gui_1.update(self.observer)
@@ -181,59 +236,31 @@ class Main():
         self.field_gui_1.update(self.observer)
         self.field_gui_2.update(self.observer)
 
-    def get_deck(self, name: str, player: int) -> Deck:
+    def get_deck(self, name: str, player: int = None) -> Deck:
         """Returns a deck or field associated with name and player.
+        Pass either deck name ('Deck') and a player id or a full deck name ('Deck1')
 
         Args:
             name:
-                'Deck', 'Discard', 'Hand' or 'Field'"""
-        if name == "Deck":
-            if player == 1:
-                return self.deck_1
-            elif player == 2:
-                return self.deck_2
-        elif name == "Discard":
-            if player == 1:
-                return self.discard_1
-            elif player == 2:
-                return self.discard_2
-        elif name == "Hand":
-            if player == 1:
-                return self.hand_1
-            elif player == 2:
-                return self.hand_2
-        elif name == "Field":
-            if player == 1:
-                return self.field_1
-            elif player == 2:
-                return self.field_2
+                'Deck', 'Discard', 'Hand', 'Field', 'Active', 'Area'"""
+        if player is None:
+            key = name
+        else:
+            key = name + str(player)
+        return self.all_decks[key]
 
-    def get_gui(self, name: str, player: int) -> FieldGUI | DeckGUI | HandGUI:
+    def get_gui(self, name: str, player: int = None) -> FieldGUI | DeckGUI | HandGUI:
         """Returns a gui associated with name and player.
+        Pass either deck name ('Deck') and a player id or a full deck name ('Deck1')
 
         Args:
             name:
-                'Deck', 'Discard', 'Hand' or 'Field'"""
-        if name == "Deck":
-            if player == 1:
-                return self.deck_gui_1
-            elif player == 2:
-                return self.deck_gui_2
-        elif name == "Discard":
-            if player == 1:
-                return self.discard_gui_1
-            elif player == 2:
-                return self.discard_gui_2
-        elif name == "Hand":
-            if player == 1:
-                return self.hand_gui_1
-            elif player == 2:
-                return self.hand_gui_2
-        elif name == "Field":
-            if player == 1:
-                return self.field_gui_1
-            elif player == 2:
-                return self.field_gui_2
+                'Deck', 'Discard', 'Hand', 'Field', 'Active' or 'Area'"""
+        if player is None:
+            key = name
+        else:
+            key = name + str(player)
+        return self.all_guis[key]
 
     def view_card(self, card: Card, observer: int) -> None:
         """Views the full size image of a card. Depending on visibility and observer,
@@ -265,6 +292,10 @@ class Main():
         self.equip_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
+    def show_active_menu(self) -> None:
+        self.active_menu.tk_popup(
+            self.root.winfo_pointerx(), self.root.winfo_pointery())
+
     def click_deck(self, name: str, player: int) -> None:
         """Views the top card of a deck and shows options for that deck."""
         self.selected_location = self.get_deck(name, player)
@@ -288,18 +319,23 @@ class Main():
         self.show_hand_menu()
         self.selected_action = ""
 
-    def select_in_field(self, player: int, index: int) -> None:
-        """Called when the user clicks a card in a field"""
+    def select_in_field(self, name: str, player: int, index: int) -> None:
+        """Called when the user clicks a card in a field or active"""
         if self.selected_action == "":
-            self.selected_location = self.get_deck("Field", player)
+            self.selected_location = self.get_deck(name, player)
             self.selected_index = index
             self.selected_card = self.selected_location.get_card(index)
-            self.selected_gui = self.get_gui("Field", player)
+            self.selected_gui = self.get_gui(name, player)
             self.view_card(self.selected_card, self.observer)
-            self.show_field_menu()
+
+            if name == "Field":
+                self.show_field_menu()
+            elif name == "Active":
+                self.show_active_menu()
+
         elif self.selected_action == "Equip":
-            self.equip_card("Field", player, index)
-            self.selected_location = self.get_deck("Field", player)
+            self.equip_card(name, player, index)
+            self.selected_location = self.get_deck(name, player)
             self.selected_index = index
             self.selected_card = self.selected_location.get_card(index)
         self.selected_action = ""
@@ -315,13 +351,22 @@ class Main():
             self.get_deck("Discard", self.selected_card.owner), self.observer)
 
     def play_card(self, visibility: int) -> None:
-        """Moves a card to the field as either face-up or face-down"""
-        destination = self.get_deck("Field", self.selected_card.owner)
+        """Moves a card to the field as either face-up or face-down.
+        The card will be moved to Active is possible.
+        Otherwise, it will be moved to Field"""
+        destination = self.get_deck("Active", self.selected_card.owner)
         if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                  destination=destination, visibility=visibility):
             self.selected_gui.update(self.observer)
-            self.get_gui("Field", self.selected_card.owner).update(
+            self.get_gui("Active", self.selected_card.owner).update(
                 self.observer)
+        else:
+            destination = self.get_deck("Field", self.selected_card.owner)
+            if transitions.move_card(origin=self.selected_location, index=self.selected_index,
+                                     destination=destination, visibility=visibility):
+                self.selected_gui.update(self.observer)
+                self.get_gui("Field", self.selected_card.owner).update(
+                    self.observer)
 
     def move_card(self, location: str) -> None:
         """Moves a card from one location to another. Discards its equips"""
@@ -366,6 +411,8 @@ class Main():
             self.selected_card.set_visibility(Card.FACE_UP)
         else:
             self.selected_card.set_visibility(Card.FACE_DOWN)
+
+        self.get_gui("Active", self.selected_card.owner).update(self.observer)
         self.get_gui("Field", self.selected_card.owner).update(self.observer)
 
     def prepare_equip(self):
@@ -382,6 +429,7 @@ class Main():
                                   destination, index)
         self.get_gui("Hand", self.selected_card.owner).update(self.observer)
         self.get_gui("Field", card.owner).update(self.observer)
+        self.get_gui("Active", card.owner).update(self.observer)
         self.details_gui.view_card(card, self.observer)
 
     def unequip_card(self, location: str) -> None:

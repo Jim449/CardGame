@@ -18,6 +18,30 @@ def move_card(origin: Deck | Field, index: int, destination: Deck | Field, visib
         return False
 
 
+def move_or_toss(origin: Deck | Field, index: int, destination: Deck | Field, bench: Deck | Field,
+                 visibility=Card.FACE_UP):
+    """Moves a card from one deck to another. If the destination is occupied,
+    moves the card to a reserve destination. Equip cards are retained.
+    Returns true if card was moved"""
+    # This function may not be very useful
+    # Maybe if I use it with filter to perform a mass action
+    card = origin.get_card(index)
+
+    if card is None:
+        return False
+
+    if destination.has_space():
+        origin.remove_card(index)
+        destination.add_card(card, visibility)
+        return True
+    elif bench.has_space():
+        origin.remove_card(index)
+        bench.add_card(card, visibility)
+        return True
+    else:
+        return False
+
+
 def move_equip(equip: Card, destination: Deck) -> bool:
     """Moves an equip card to a deck"""
     equip.unequip()

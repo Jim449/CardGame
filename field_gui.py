@@ -5,8 +5,10 @@ from field import Field
 
 class FieldGUI():
     def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage,
-                 player: int, field: Field, size: int = 6):
+                 name: str, player: int, field: Field, size: int = 6,
+                 padding: int = 0, grid_start: int = 1):
 
+        self.name = name
         self.player: int = player
         self.cards: list[ttk.Button] = []
         self.empty_card = empty_card
@@ -15,8 +17,8 @@ class FieldGUI():
         for i in range(size):
             button = ttk.Button(
                 frame, image=empty_card, compound=tkinter.TOP, text="",
-                command=lambda player=player, index=i: main.select_in_field(player, index))
-            button.grid(column=i, row=0)
+                command=lambda name=name, player=player, index=i: main.select_in_field(name, player, index))
+            button.grid(column=grid_start + i, row=0, padx=padding)
             button["state"] = tkinter.DISABLED
             self.cards.append(button)
 
