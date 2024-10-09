@@ -106,13 +106,18 @@ class Main():
             self, self.field_2_frame, name="Area", empty_card=self.empty_miniature,
             player=2, field=self.area_2, size=1, padding=20, grid_start=7)
 
+        self.scrutinize_discard_1: DeckScrutinizeGUI = DeckScrutinizeGUI(
+            self, self.root, name="Discard", player=1, empty_card=self.empty_miniature,
+            deck=self.discard_1)
+        self.scrutinize_discard_2: DeckScrutinizeGUI = DeckScrutinizeGUI(
+            self, self.root, name="Discard", player=2, empty_card=self.empty_miniature,
+            deck=self.discard_2)
+
         self.all_guis = {"Hand1": self.hand_gui_1, "Hand2": self.hand_gui_2, "Field1": self.field_gui_1,
                          "Field2": self.field_gui_2, "Deck1": self.deck_gui_1, "Deck2": self.deck_gui_2,
                          "Discard1": self.discard_gui_1, "Discard2": self.discard_gui_2, "Active1": self.active_gui_1,
-                         "Active2": self.active_gui_2, "Area1": self.area_gui_1, "Area2": self.area_gui_2}
-
-        self.scrutinize_discard: DeckScrutinizeGUI = DeckScrutinizeGUI(
-            self, self.root, name="Discard", empty_card=self.empty_miniature)
+                         "Active2": self.active_gui_2, "Area1": self.area_gui_1, "Area2": self.area_gui_2,
+                         "Scrutinize1": self.scrutinize_discard_1, "Scrutinize2": self.scrutinize_discard_2}
 
         self.details_frame: ttk.Frame = ttk.Frame(
             self.root, width=290, height=480)
@@ -255,7 +260,7 @@ class Main():
 
         Args:
             name:
-                'Deck', 'Discard', 'Hand', 'Field', 'Active' or 'Area'"""
+                'Deck', 'Discard', 'Hand', 'Field', 'Active', 'Area' or 'Scrutinize'"""
         if player is None:
             key = name
         else:
@@ -297,7 +302,7 @@ class Main():
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
     def click_deck(self, name: str, player: int) -> None:
-        """Views the top card of a deck and shows options for that deck."""
+        """Views the top card of a deck or discard pile and shows options for that deck."""
         self.selected_location = self.get_deck(name, player)
         self.selected_card = self.selected_location.get_card(-1)
         self.view_card(self.selected_card, self.observer)
@@ -340,6 +345,15 @@ class Main():
             self.selected_card = self.selected_location.get_card(index)
         self.selected_action = ""
 
+    def select_in_scrutinize(self, name: str, player: int, index: int):
+        """Selects any card in the deck or discard pile"""
+        self.selected_location = self.get_deck(name, player)
+        self.selected_index = index
+        self.selected_card = self.selected_location.get_card(index)
+        self.selected_gui = self.get_gui(name, player)
+        self.view_card(self.selected_card, self.observer)
+        print("Selected in scrutinize! So far so good! Just need to add options for this")
+
     def select_equip(self, index: int) -> None:
         """Selects a card equipped to another card"""
         self.selected_equip = self.selected_card.get_equip(index)
@@ -347,8 +361,8 @@ class Main():
         self.show_equip_menu()
 
     def check_discard(self) -> None:
-        self.scrutinize_discard.update(
-            self.get_deck("Discard", self.selected_card.owner), self.observer)
+        self.get_gui("Scrutinize", self.selected_card.owner).update(
+            self.observer)
 
     def play_card(self, visibility: int) -> None:
         """Moves a card to the field as either face-up or face-down.
