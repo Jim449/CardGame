@@ -1,9 +1,10 @@
 import tkinter
 from tkinter import ttk
 from deck import Deck
+from base_gui import BaseGUI
 
 
-class DeckGUI():
+class DeckGUI(BaseGUI):
     def __init__(self, main, frame: ttk.Frame, name: str,
                  column: int, player: int, empty_card: tkinter.PhotoImage,
                  deck: Deck):

@@ -3,6 +3,7 @@ from tkinter import ttk
 from card import Card
 from deck import Deck
 from field import Field
+from base_gui import BaseGUI
 from hand_gui import HandGUI
 from deck_gui import DeckGUI
 from field_gui import FieldGUI
@@ -113,11 +114,12 @@ class Main():
             self, self.root, name="Discard", player=2, empty_card=self.empty_miniature,
             deck=self.discard_2)
 
-        self.all_guis = {"Hand1": self.hand_gui_1, "Hand2": self.hand_gui_2, "Field1": self.field_gui_1,
-                         "Field2": self.field_gui_2, "Deck1": self.deck_gui_1, "Deck2": self.deck_gui_2,
-                         "Discard1": self.discard_gui_1, "Discard2": self.discard_gui_2, "Active1": self.active_gui_1,
-                         "Active2": self.active_gui_2, "Area1": self.area_gui_1, "Area2": self.area_gui_2,
-                         "Scrutinize1": self.scrutinize_discard_1, "Scrutinize2": self.scrutinize_discard_2}
+        self.all_guis: BaseGUI = {
+            "Hand1": self.hand_gui_1, "Hand2": self.hand_gui_2, "Field1": self.field_gui_1,
+            "Field2": self.field_gui_2, "Deck1": self.deck_gui_1, "Deck2": self.deck_gui_2,
+            "Discard1": self.discard_gui_1, "Discard2": self.discard_gui_2, "Active1": self.active_gui_1,
+            "Active2": self.active_gui_2, "Area1": self.area_gui_1, "Area2": self.area_gui_2,
+            "Scrutinize1": self.scrutinize_discard_1, "Scrutinize2": self.scrutinize_discard_2}
 
         self.details_frame: ttk.Frame = ttk.Frame(
             self.root, width=290, height=480)
@@ -175,6 +177,19 @@ class Main():
             self.root, background="black", foreground="white")
         self.discard_menu.add_command(
             label="Check", command=self.check_discard)
+
+        self.scrutinize_discard_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.scrutinize_discard_menu.add_command(
+            label="Return to hand", command=lambda: self.move_card("Hand"))
+        self.scrutinize_discard_menu.add_command(
+            label="Play", command=lambda: self.play_card(Card.FACE_UP))
+        self.scrutinize_discard_menu.add_command(
+            label="Place on deck", command=lambda: self.move_to_deck("Top"))
+        self.scrutinize_discard_menu.add_command(
+            label="Insert under deck", command=lambda: self.move_to_deck("Bottom"))
+        self.scrutinize_discard_menu.add_command(
+            label="Shuffle into deck", command=lambda: self.move_to_deck("Shuffle"))
 
         self.equip_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -254,7 +269,7 @@ class Main():
             key = name + str(player)
         return self.all_decks[key]
 
-    def get_gui(self, name: str, player: int = None) -> FieldGUI | DeckGUI | HandGUI:
+    def get_gui(self, name: str, player: int = None) -> BaseGUI:
         """Returns a gui associated with name and player.
         Pass either deck name ('Deck') and a player id or a full deck name ('Deck1')
 
@@ -266,6 +281,11 @@ class Main():
         else:
             key = name + str(player)
         return self.all_guis[key]
+
+    def update_all_gui(self, observer: int) -> None:
+        """Updates all of the GUI:s"""
+        for gui in self.all_guis:
+            gui.update(observer)
 
     def view_card(self, card: Card, observer: int) -> None:
         """Views the full size image of a card. Depending on visibility and observer,
@@ -291,6 +311,10 @@ class Main():
 
     def show_discard_menu(self) -> None:
         self.discard_menu.tk_popup(
+            self.root.winfo_pointerx(), self.root.winfo_pointery())
+
+    def show_scrutinize_discard_menu(self) -> None:
+        self.scrutinize_discard_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
     def show_equip_menu(self) -> None:
@@ -350,9 +374,9 @@ class Main():
         self.selected_location = self.get_deck(name, player)
         self.selected_index = index
         self.selected_card = self.selected_location.get_card(index)
-        self.selected_gui = self.get_gui(name, player)
+        self.selected_gui = self.get_gui("Scrutinize", player)
         self.view_card(self.selected_card, self.observer)
-        print("Selected in scrutinize! So far so good! Just need to add options for this")
+        self.show_scrutinize_discard_menu()
 
     def select_equip(self, index: int) -> None:
         """Selects a card equipped to another card"""
@@ -361,7 +385,7 @@ class Main():
         self.show_equip_menu()
 
     def check_discard(self) -> None:
-        self.get_gui("Scrutinize", self.selected_card.owner).update(
+        self.get_gui("Scrutinize", self.selected_card.owner).activate(
             self.observer)
 
     def play_card(self, visibility: int) -> None:
@@ -411,8 +435,16 @@ class Main():
         else:
             transitions.move_to_deck(self.selected_location, self.selected_index, destination,
                                      shuffle=True)
-        self.get_gui("Hand", self.selected_card.owner).update(self.observer)
+        self.selected_gui.update(self.observer)
         self.get_gui("Deck", self.selected_card.owner).update(self.observer)
+        # TODO Errors might occur if discard becomes empty due to card move
+        # The selected gui update will only update the scrutinize, not the compact deck
+        # I need to write this code in move_card and play_card as well
+        # But I'd rather just write an update_all_gui-method and be done with it
+        # Note that the scrutinize gui actually pops up when updated!
+        # Maybe not what I wanted...
+        self.discard_gui_1.update(self.observer)
+        self.discard_gui_2.update(self.observer)
 
     def shuffle_deck(self):
         """Shuffles a deck"""
@@ -452,9 +484,11 @@ class Main():
         transitions.move_equip(self.selected_equip, destination)
         self.details_gui.view_card(self.selected_card, self.observer)
         self.get_gui(location, self.selected_equip.owner).update(self.observer)
-        # Not sure which field to update so just update both
+        # Not sure which field to update so just update everything. It's not that slow
         self.get_gui("Field", 1).update(self.observer)
         self.get_gui("Field", 2).update(self.observer)
+        self.get_gui("Active", 1).update(self.observer)
+        self.get_gui("Active", 2).update(self.observer)
 
     def draw_card(self) -> None:
         """Draws a card from a deck to a hand"""

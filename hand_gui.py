@@ -1,9 +1,10 @@
 from tkinter import ttk
 import tkinter
 from deck import Deck
+from base_gui import BaseGUI
 
 
-class HandGUI():
+class HandGUI(BaseGUI):
     def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage,
                  player: int, hand: Deck, size: int = 6):
 

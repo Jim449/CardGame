@@ -1,9 +1,10 @@
 from deck import Deck
 import tkinter
 from tkinter import ttk
+from base_gui import BaseGUI
 
 
-class DeckScrutinizeGUI():
+class DeckScrutinizeGUI(BaseGUI):
     def __init__(self, main, root: tkinter.Tk, name: str, player: int, empty_card: tkinter.PhotoImage,
                  deck: Deck, rows: int = 4, columns: int = 10):
         self.name = name
@@ -41,4 +42,8 @@ class DeckScrutinizeGUI():
             else:
                 self.content[index].config(image=self.empty_card, text="")
                 self.content[index]["state"] = tkinter.DISABLED
+
+    def activate(self, observer: int):
+        """Opens up the scrutinize window"""
+        self.update(observer)
         self.panel.deiconify()

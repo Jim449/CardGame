@@ -1,9 +1,10 @@
 from tkinter import ttk
 import tkinter
 from field import Field
+from base_gui import BaseGUI
 
 
-class FieldGUI():
+class FieldGUI(BaseGUI):
     def __init__(self, main, frame: ttk.Frame, empty_card: tkinter.PhotoImage,
                  name: str, player: int, field: Field, size: int = 6,
                  padding: int = 0, grid_start: int = 1):
