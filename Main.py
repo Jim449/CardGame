@@ -208,13 +208,13 @@ class Main():
 
     def test_setup(self) -> None:
         """Adds sample cards to both decks and draws starting hands"""
-        cat = Card("Black cat", tkinter.PhotoImage(file="Card images/Black cat.png"),
+        cat = Card(1, "Black cat", tkinter.PhotoImage(file="Card images/Black cat.png"),
                    tkinter.PhotoImage(file="Card miniatures/Black cat miniature.png"))
-        hound = Card("Black hound", tkinter.PhotoImage(file="Card images/Black hound.png"),
+        hound = Card(2, "Black hound", tkinter.PhotoImage(file="Card images/Black hound.png"),
                      tkinter.PhotoImage(file="Card miniatures/Black hound miniature.png"))
-        remains = Card("Burning remains", tkinter.PhotoImage(file="Card images/Burning remains.png"),
+        remains = Card(3, "Burning remains", tkinter.PhotoImage(file="Card images/Burning remains.png"),
                        tkinter.PhotoImage(file="Card miniatures/Burning remains miniature.png"))
-        drowned = Card("Drowned soul", tkinter.PhotoImage(file="Card images/Drowned soul.png"),
+        drowned = Card(4, "Drowned soul", tkinter.PhotoImage(file="Card images/Drowned soul.png"),
                        tkinter.PhotoImage(file="Card miniatures/Drowned soul miniature.png"))
 
         for i in range(10):
@@ -395,16 +395,12 @@ class Main():
         destination = self.get_deck("Active", self.selected_card.owner)
         if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                  destination=destination, visibility=visibility):
-            self.selected_gui.update(self.observer)
-            self.get_gui("Active", self.selected_card.owner).update(
-                self.observer)
+            self.update_all_gui(self.observer)
         else:
             destination = self.get_deck("Field", self.selected_card.owner)
             if transitions.move_card(origin=self.selected_location, index=self.selected_index,
                                      destination=destination, visibility=visibility):
-                self.selected_gui.update(self.observer)
-                self.get_gui("Field", self.selected_card.owner).update(
-                    self.observer)
+                self.update_all_gui(self.observer)
 
     def move_card(self, location: str) -> None:
         """Moves a card from one location to another. Discards its equips"""
@@ -413,11 +409,7 @@ class Main():
                                  destination=destination):
             transitions.discard_equips(
                 self.selected_card, self.discard_1, self.discard_2)
-            self.selected_gui.update(self.observer)
-            self.get_gui(location, self.selected_card.owner).update(
-                self.observer)
-            self.discard_gui_1.update(self.observer)
-            self.discard_gui_2.update(self.observer)
+            self.update_all_gui(self.observer)
 
     def move_to_deck(self, position: str = "Shuffle"):
         """Moves a card to the deck.
@@ -435,16 +427,7 @@ class Main():
         else:
             transitions.move_to_deck(self.selected_location, self.selected_index, destination,
                                      shuffle=True)
-        self.selected_gui.update(self.observer)
-        self.get_gui("Deck", self.selected_card.owner).update(self.observer)
-        # TODO Errors might occur if discard becomes empty due to card move
-        # The selected gui update will only update the scrutinize, not the compact deck
-        # I need to write this code in move_card and play_card as well
-        # But I'd rather just write an update_all_gui-method and be done with it
-        # Note that the scrutinize gui actually pops up when updated!
-        # Maybe not what I wanted...
-        self.discard_gui_1.update(self.observer)
-        self.discard_gui_2.update(self.observer)
+        self.update_all_gui(self.observer)
 
     def shuffle_deck(self):
         """Shuffles a deck"""
@@ -473,9 +456,7 @@ class Main():
 
         transitions.equip_card_to(self.selected_location, self.selected_index,
                                   destination, index)
-        self.get_gui("Hand", self.selected_card.owner).update(self.observer)
-        self.get_gui("Field", card.owner).update(self.observer)
-        self.get_gui("Active", card.owner).update(self.observer)
+        self.update_all_gui(self.observer)
         self.details_gui.view_card(card, self.observer)
 
     def unequip_card(self, location: str) -> None:
@@ -483,12 +464,7 @@ class Main():
         destination = self.get_deck(location, self.selected_equip.owner)
         transitions.move_equip(self.selected_equip, destination)
         self.details_gui.view_card(self.selected_card, self.observer)
-        self.get_gui(location, self.selected_equip.owner).update(self.observer)
-        # Not sure which field to update so just update everything. It's not that slow
-        self.get_gui("Field", 1).update(self.observer)
-        self.get_gui("Field", 2).update(self.observer)
-        self.get_gui("Active", 1).update(self.observer)
-        self.get_gui("Active", 2).update(self.observer)
+        self.update_all_gui(self.observer)
 
     def draw_card(self) -> None:
         """Draws a card from a deck to a hand"""

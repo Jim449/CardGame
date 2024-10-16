@@ -79,3 +79,15 @@ class Deck:
         """Shuffles the deck"""
         random.shuffle(self.content)
         return True
+
+    def count_card(self, id: int) -> int:
+        """Returns the amount of copies of a specific card.
+        Each card instance is treated as a single copy,
+        regardless of card.get_amount() value."""
+        copies = 0
+
+        for card in self.content:
+            if card.id == id:
+                copies += 1
+
+        return copies

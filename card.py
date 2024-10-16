@@ -19,14 +19,16 @@ class Card:
     back_image: PhotoImage = None
     back_miniature: PhotoImage = None
 
-    def __init__(self, name: str, image: PhotoImage, miniature: PhotoImage,
+    def __init__(self, id: int, name: str, image: PhotoImage, miniature: PhotoImage,
                  properties: dict[str, Any] = None) -> None:
         """Instantiates an ownerless card"""
+        self.id = id
         self.name: str = name
         self.image: PhotoImage = image
         self.miniature: PhotoImage = miniature
         self.owner: int = 0
         self.visibility: int = 0
+        self.amount: int = 1
         self.target_list: list[Card] = []
         self.targeted_by: list[Card] = []
         self.equip_list: list[Card] = []
@@ -42,6 +44,7 @@ class Card:
         copy: Card = Card(self.name, self.image,
                           self.miniature, self.properties)
         copy.owner = player
+        copy.amount = 1
         return copy
 
     def set_visibility(self, visibility: int) -> None:
@@ -147,6 +150,10 @@ class Card:
         """Returns true if this card has the given property"""
         return property in self.properties
 
+    def get_property(self, property: str) -> Any:
+        """Returns the value of a property"""
+        return self.properties[property]
+
     def add_property(self, property: str, value: Any) -> None:
         """Adds a property to this card"""
         self.properties[property] = value
@@ -157,3 +164,15 @@ class Card:
             self.properties.remove(property)
         except ValueError:
             pass
+
+    def get_amount(self) -> int:
+        """Returns the amount of copies"""
+        return self.amount
+
+    def set_amount(self, value: int) -> None:
+        """Sets the amount of copies"""
+        self.amount = value
+
+    def add_amount(self, value: int) -> None:
+        """Adds copies"""
+        self.amount += value
