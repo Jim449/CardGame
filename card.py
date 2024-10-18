@@ -41,7 +41,7 @@ class Card:
 
     def give_to(self, player: int) -> Self:
         """Returns a copy of this card, with ownership set to player"""
-        copy: Card = Card(self.name, self.image,
+        copy: Card = Card(self.id, self.name, self.image,
                           self.miniature, self.properties)
         copy.owner = player
         copy.amount = 1
