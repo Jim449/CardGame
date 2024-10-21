@@ -95,7 +95,7 @@ def draw(origin: Deck, destination: Deck, amount: int = 1, visibility: int = Car
     return True
 
 
-def move_to_deck(origin: Deck, index: int, destination: Deck, target_index: int = -1, shuffle: bool = False) -> bool:
+def move_to_deck(origin: Deck, index: int, destination: Deck, target_index: int, shuffle: bool = False) -> bool:
     """Moves a card to a specific index of a deck"""
     card = origin.remove_card(index)
     destination.insert_card(card, target_index)

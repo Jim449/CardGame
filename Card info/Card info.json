@@ -1,0 +1,576 @@
+[
+    {
+        "name": "Black cat",
+        "id": 1,
+        "image": "Black cat.png",
+        "miniature": "Black cat miniature.png",
+        "normal": true,
+        "void": true,
+        "spirit": true,
+        "ignore defense": true,
+        "evasion": true,
+        "sharp senses": true,
+        "beast": true
+    },
+    {
+        "name": "Black hound",
+        "id": 2,
+        "image": "Black hound.png",
+        "miniature": "Black hound miniature.png",
+        "normal": true,
+        "void": true,
+        "spirit": true,
+        "instant death": true,
+        "sharp senses": true,
+        "beast": true
+    },
+    {
+        "name": "Beholder",
+        "id": 3,
+        "image": "Placeholder.png",
+        "miniature": "Beholder miniature.png",
+        "void": true,
+        "spirit": true,
+        "strange mind": true
+    },
+    {
+        "name": "Slime",
+        "id": 4,
+        "image": "Placeholder.png",
+        "miniature": "Slime miniature.png",
+        "poison": true,
+        "void": true,
+        "spirit": true,
+        "defense down": true,
+        "regeneration": true
+    },
+    {
+        "name": "Imp",
+        "id": 5,
+        "image": "Placeholder.png",
+        "miniature": "Imp miniature.png",
+        "void": true,
+        "fire": true,
+        "spirit": true,
+        "drain faith": true,
+        "switch": true
+    },
+    {
+        "name": "Nightmare",
+        "id": 6,
+        "image": "Placeholder.png",
+        "miniature": "Nightmare miniature.png",
+        "fire": true,
+        "ghost": true,
+        "spirit": true
+    },
+    {
+        "name": "Demonic shrine",
+        "id": 7,
+        "image": "Placeholder.png",
+        "miniature": "Demonic shrine miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Demon",
+        "id": 8,
+        "image": "Placeholder.png",
+        "miniature": "Demon miniature.png",
+        "void": true,
+        "fire": true,
+        "avatar": true,
+        "regeneration": true
+    },
+    {
+        "name": "Burning remains",
+        "id": 9,
+        "image": "Burning remains.png",
+        "miniature": "Burning remains miniature.png",
+        "fire": true,
+        "ghost": true,
+        "spirit": true,
+        "counter": true,
+        "undead": true
+    },
+    {
+        "name": "Shadow",
+        "id": 10,
+        "image": "Placeholder.png",
+        "miniature": "Shadow miniature.png",
+        "ghost": true,
+        "void": true,
+        "spirit": true,
+        "strange mind": true,
+        "switch": true
+    },
+    {
+        "name": "Gargoyle",
+        "id": 11,
+        "image": "Placeholder.png",
+        "miniature": "Gargoyle miniature.png",
+        "earth": true,
+        "ghost": true,
+        "spirit": true,
+        "defense up": true,
+        "elemental": true
+    },
+    {
+        "name": "Dust spirit",
+        "id": 12,
+        "image": "Placeholder.png",
+        "miniature": "Dust spirit miniature.png",
+        "earth": true,
+        "ghost": true,
+        "spirit": true,
+        "prevent healing": true
+    },
+    {
+        "name": "Earth shrine",
+        "id": 13,
+        "image": "Placeholder.png",
+        "miniature": "Earth shrine miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Dust dragon",
+        "id": 14,
+        "image": "Placeholder.png",
+        "miniature": "Dust dragon miniature.png",
+        "earth": true,
+        "avatar": true,
+        "resistance": true
+    },
+    {
+        "name": "Behemoth",
+        "id": 15,
+        "image": "Placeholder.png",
+        "miniature": "Behemoth miniature.png",
+        "earth": true,
+        "normal": true,
+        "avatar": true
+    },
+    {
+        "name": "Shrine of death",
+        "id": 16,
+        "image": "Placeholder.png",
+        "miniature": "Shrine of death miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Bone dragon",
+        "id": 17,
+        "image": "Placeholder.png",
+        "miniature": "Bone dragon miniature.png",
+        "ghost": true,
+        "divine": true,
+        "avatar": true,
+        "undead": true,
+        "resistance": true
+    },
+    {
+        "name": "Black knight",
+        "id": 18,
+        "image": "Placeholder.png",
+        "miniature": "Black knight miniature.png",
+        "ghost": true,
+        "avatar": true,
+        "undead": true,
+        "instant death": true
+    },
+    {
+        "name": "Drowned soul",
+        "id": 19,
+        "image": "Drowned soul.png",
+        "miniature": "Drowned soul miniature.png",
+        "water": true,
+        "ghost": true,
+        "spirit": true,
+        "undead": true,
+        "attack down": true,
+        "prevent switch": true
+    },
+    {
+        "name": "Spectre",
+        "id": 20,
+        "image": "Placeholder.png",
+        "miniature": "Spectre miniature.png",
+        "ghost": true,
+        "spirit": true,
+        "undead": true,
+        "incorpereal": true,
+        "drain health": true,
+        "drain faith": true
+    },
+    {
+        "name": "Armadillo",
+        "id": 21,
+        "image": "Placeholder.png",
+        "miniature": "Armadillo miniature.png",
+        "normal": true,
+        "earth": true,
+        "spirit": true,
+        "beast": true,
+        "defense up": true
+    },
+    {
+        "name": "Golem",
+        "id": 22,
+        "image": "Placeholder.png",
+        "miniature": "Golem miniature.png",
+        "earth": true,
+        "spirit": true,
+        "elemental": true,
+        "resistance": true
+    },
+    {
+        "name": "Gravity rock",
+        "id": 23,
+        "image": "Placeholder.png",
+        "miniature": "Gravity rock miniature.png",
+        "earth": true,
+        "void": true,
+        "spirit": true,
+        "strange mind": true,
+        "sure hit": true,
+        "self-destruction": true,
+        "instant death": true
+    },
+    {
+        "name": "Magma golem",
+        "id": 24,
+        "image": "Placeholder.png",
+        "miniature": "Magma golem miniature.png",
+        "fire": true,
+        "earth": true,
+        "spirit": true,
+        "elemental": true,
+        "counter": true
+    },
+    {
+        "name": "Fire spirit",
+        "id": 25,
+        "image": "Placeholder.png",
+        "miniature": "Fire spirit miniature.png",
+        "fire": true,
+        "spirit": true,
+        "elemental": true,
+        "healing": true,
+        "summoner": true
+    },
+    {
+        "name": "Salamander",
+        "id": 26,
+        "image": "Placeholder.png",
+        "miniature": "Salamander miniature.png",
+        "fire": true,
+        "spirit": true,
+        "regeneration": true
+    },
+    {
+        "name": "Shrine of fire",
+        "id": 27,
+        "image": "Placeholder.png",
+        "miniature": "Shrine of fire miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Efreet",
+        "id": 28,
+        "image": "Placeholder.png",
+        "miniature": "Efreet miniature.png",
+        "fire": true,
+        "avatar": true,
+        "elemental": true,
+        "counter": true
+    },
+    {
+        "name": "Phoenix",
+        "id": 29,
+        "image": "Placeholder.png",
+        "miniature": "Phoenix miniature.png",
+        "fire": true,
+        "divine": true,
+        "avatar": true
+    },
+    {
+        "name": "Dragon shrine",
+        "id": 30,
+        "image": "Placeholder.png",
+        "miniature": "Dragon shrine miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Black dragon",
+        "id": 31,
+        "image": "Placeholder.png",
+        "miniature": "Black dragon miniature.png",
+        "fire": true,
+        "divine": true,
+        "avatar": true,
+        "resistance": true
+    },
+    {
+        "name": "Astral dragon",
+        "id": 32,
+        "image": "Placeholder.png",
+        "miniature": "Astral dragon miniature.png",
+        "ghost": true,
+        "divine": true,
+        "avatar": true,
+        "resistance": true,
+        "psychic": true
+    },
+    {
+        "name": "Farseer",
+        "id": 33,
+        "image": "Placeholder.png",
+        "miniature": "Farseer miniature.png",
+        "divine": true,
+        "spirit": true,
+        "sure hit": true
+    },
+    {
+        "name": "Fox spirit",
+        "id": 34,
+        "image": "Placeholder.png",
+        "miniature": "Fox spirit miniature.png",
+        "divine": true,
+        "spirit": true,
+        "beast": true,
+        "add faith": true
+    },
+    {
+        "name": "Scarab",
+        "id": 35,
+        "image": "Placeholder.png",
+        "miniature": "Scarab miniature.png",
+        "divine": true,
+        "earth": true,
+        "spirit": true,
+        "draw": true
+    },
+    {
+        "name": "Frost giant",
+        "id": 36,
+        "image": "Placeholder.png",
+        "miniature": "Frost giant miniature.png",
+        "water": true,
+        "spirit": true,
+        "attack down": true
+    },
+    {
+        "name": "Kappa",
+        "id": 37,
+        "image": "Placeholder.png",
+        "miniature": "Kappa miniature.png",
+        "water": true,
+        "spirit": true,
+        "instant death": true
+    },
+    {
+        "name": "Shrine of water",
+        "id": 38,
+        "image": "Placeholder.png",
+        "miniature": "Shrine of water miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Water serpent",
+        "id": 39,
+        "image": "Placeholder.png",
+        "miniature": "Water serpent miniature.png",
+        "water": true,
+        "divine": true,
+        "avatar": true,
+        "immunity": true
+    },
+    {
+        "name": "Shen",
+        "id": 40,
+        "image": "Placeholder.png",
+        "miniature": "Shen miniature.png",
+        "water": true,
+        "avatar": true,
+        "sleep": true
+    },
+    {
+        "name": "Water elemental",
+        "id": 41,
+        "image": "Placeholder.png",
+        "miniature": "Water elemental miniature.png",
+        "water": true,
+        "spirit": true,
+        "elemental": true,
+        "healing": true
+    },
+    {
+        "name": "White snake",
+        "id": 42,
+        "image": "Placeholder.png",
+        "miniature": "White snake miniature.png",
+        "divine": true,
+        "spirit": true,
+        "drain health": true,
+        "remove debuff": true
+    },
+    {
+        "name": "Sprite",
+        "id": 43,
+        "image": "Placeholder.png",
+        "miniature": "Sprite miniature.png",
+        "divine": true,
+        "earth": true,
+        "spirit": true,
+        "elemental": true,
+        "healing": true
+    },
+    {
+        "name": "Giant rat",
+        "id": 44,
+        "image": "Placeholder.png",
+        "miniature": "Giant rat miniature.png",
+        "normal": true,
+        "poison": true,
+        "spirit": true,
+        "beast": true,
+        "sharp senses": true,
+        "poisonous": true
+    },
+    {
+        "name": "Troll",
+        "id": 45,
+        "image": "Placeholder.png",
+        "miniature": "Troll miniature.png",
+        "normal": true,
+        "spirit": true,
+        "regeneration": true
+    },
+    {
+        "name": "Mist wolf",
+        "id": 46,
+        "image": "Placeholder.png",
+        "miniature": "Mist wolf miniature.png",
+        "normal": true,
+        "ghost": true,
+        "sharp senses": true
+    },
+    {
+        "name": "Scorpion",
+        "id": 46,
+        "image": "Placeholder.png",
+        "miniature": "Scorpion miniature.png",
+        "poison": true,
+        "spirit": true,
+        "poisonous": true
+    },
+    {
+        "name": "Shrine of disaster",
+        "id": 47,
+        "image": "Placeholder.png",
+        "miniature": "Shrine of disaster miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Basilisk",
+        "id": 48,
+        "image": "Placeholder.png",
+        "miniature": "Basilisk miniature.png",
+        "poison": true,
+        "avatar": true,
+        "poisonous": true,
+        "instant death": true
+    },
+    {
+        "name": "Hydra",
+        "id": 49,
+        "image": "Placeholder.png",
+        "miniature": "Hydra miniature.png",
+        "poison": true,
+        "divine": true,
+        "avatar": true,
+        "poisonous": true,
+        "regeneration": true
+    },
+    {
+        "name": "Plane walker",
+        "id": 50,
+        "image": "Placeholder.png",
+        "miniature": "Plane walker miniature.png",
+        "void": true,
+        "spirit": true,
+        "strange mind": true,
+        "ignore defense": true,
+        "switch": true
+    },
+    {
+        "name": "Werewolf",
+        "id": 51,
+        "image": "Placeholder.png",
+        "miniature": "Werewolf miniature.png",
+        "normal": true,
+        "spirit": true,
+        "beast": true,
+        "sharp senses": true,
+        "attack up": true
+    },
+    {
+        "name": "Tengu",
+        "id": 52,
+        "image": "Placeholder.png",
+        "miniature": "Tengu miniature.png",
+        "storm": true,
+        "ghost": true,
+        "spirit": true,
+        "prevent attack": true,
+        "remove buffs": true
+    },
+    {
+        "name": "Spirit weasel",
+        "id": 53,
+        "image": "Placeholder.png",
+        "miniature": "Spirit weasel miniature.png",
+        "storm": true,
+        "spirit": true,
+        "beast": true,
+        "sharp senses": true,
+        "sure hit": true,
+        "evasion": true
+    },
+    {
+        "name": "Shrine of storm",
+        "id": 54,
+        "image": "Placeholder.png",
+        "miniature": "Shrine of storm miniature.png",
+        "shrine": true
+    },
+    {
+        "name": "Thunderbird",
+        "id": 55,
+        "image": "Placeholder.png",
+        "miniature": "Thunderbird miniature.png",
+        "storm": true,
+        "avatar": true,
+        "sure hit": true
+    },
+    {
+        "name": "Garuda",
+        "id": 56,
+        "image": "Placeholder.png",
+        "miniature": "Garuda miniature.png",
+        "storm": true,
+        "avatar": true,
+        "beast": true,
+        "sharp senses": true,
+        "prevent attack": true
+    },
+    {
+        "name": "Sand wyrm",
+        "id": 57,
+        "image": "Placeholder.png",
+        "miniature": "Sand wyrm miniature.png",
+        "earth": true,
+        "void": true,
+        "instant death": true,
+        "defense up": true
+    }
+]

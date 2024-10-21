@@ -130,9 +130,27 @@ class Game():
             self.root, width=290, height=160, style="TFrame")
         self.option_frame.grid_propagate(False)
         self.option_frame.grid(row=3, column=1)
+
         self.end_turn_button: ttk.Button = ttk.Button(
             self.option_frame, text="End turn", command=self.end_turn)
-        self.end_turn_button.grid()
+        self.end_turn_button.grid(row=0)
+
+        # Changes:
+        # End turn - should switch to unseeing mode until player clicks ok on popup window
+        # (good for multiplayer games on single computer)
+        # Keep observer switch and card draw
+
+        # Some more stuff:
+        # Toggle all-seeing mode
+        # Toggle unseeing mode - since you may not want to click End turn. You can do it manually
+        # Switch observer
+        # End game - needs a title screen which lets you open the deck builder
+        # Filter cards - search cards from deck or perform mass card movements
+        # Such as "destroy all cards on field", "discard entire hand"
+
+        self.filter_button: ttk.Button = ttk.Button(
+            self.option_frame, text="Filter cards")
+        self.filter_button.grid(row=1)
 
         self.hand_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -415,18 +433,11 @@ class Game():
         Args:
             position:
                 'Top', 'Bottom', or 'Shuffle'"""
-        # TODO There is a logical error where card returned to top is not drawn
-        # Card returned to bottom is not drawn, cannot conclude it works as intended
-        # Confirmed that the else-statement is not reached
-        # No apparent problem in transitions.move_to_deck
-        # Correct card appears to be removed from hand
-        # No apparent problem in deck.insert_card
-        # No apparent problem in draw methods
-
         destination = self.get_deck("Deck", self.selected_card.owner)
+
         if position == "Top":
             transitions.move_to_deck(self.selected_location, self.selected_index, destination,
-                                     target_index=-1)
+                                     target_index=destination.get_size())
         elif position == "Bottom":
             transitions.move_to_deck(self.selected_location, self.selected_index, destination,
                                      target_index=0)
