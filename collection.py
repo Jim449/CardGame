@@ -31,6 +31,10 @@ class Collection():
         and sets the owner of the copy"""
         return self.content[id].give_to(owner)
 
+    def get_size(self) -> int:
+        """Returns the amount of unique cards in this collection"""
+        return len(self.content)
+
     def clear_filter(self) -> None:
         """Clears the filter"""
         self.filter_view.clear()

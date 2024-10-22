@@ -125,10 +125,10 @@
         "prevent healing": true
     },
     {
-        "name": "Earth shrine",
+        "name": "Shrine of earth",
         "id": 13,
         "image": "Placeholder.png",
-        "miniature": "Earth shrine miniature.png",
+        "miniature": "Shrine of earth miniature.png",
         "shrine": true
     },
     {
@@ -168,10 +168,10 @@
         "resistance": true
     },
     {
-        "name": "Black knight",
+        "name": "Death knight",
         "id": 18,
         "image": "Placeholder.png",
-        "miniature": "Black knight miniature.png",
+        "miniature": "Death knight miniature.png",
         "ghost": true,
         "avatar": true,
         "undead": true,
@@ -330,10 +330,10 @@
         "sure hit": true
     },
     {
-        "name": "Fox spirit",
+        "name": "Spirit fox",
         "id": 34,
         "image": "Placeholder.png",
-        "miniature": "Fox spirit miniature.png",
+        "miniature": "Spirit fox miniature.png",
         "divine": true,
         "spirit": true,
         "beast": true,
@@ -572,5 +572,134 @@
         "void": true,
         "instant death": true,
         "defense up": true
+    },
+    {
+        "name": "Blizzard",
+        "id": 58,
+        "image": "Placeholder.png",
+        "miniature": "Blizzard miniature.png",
+        "spell": true,
+        "area spell": true,
+        "attack down": true
+    },
+    {
+        "name": "Flaming fields",
+        "id": 59,
+        "image": "Placeholder.png",
+        "miniature": "Flaming fields miniature.png",
+        "spell": true,
+        "area spell": true,
+        "damaging": true
+    },
+    {
+        "name": "Hypnosis",
+        "id": 60,
+        "image": "Placeholder.png",
+        "miniature": "Hypnosis miniature.png",
+        "spell": true,
+        "normal spell": true,
+        "sleep": true
+    },
+    {
+        "name": "Inferno",
+        "id": 61,
+        "image": "Placeholder.png",
+        "miniature": "Inferno miniature.png",
+        "spell": true,
+        "normal spell": true,
+        "damaging": true
+    },
+    {
+        "name": "Mist cloak",
+        "id": 62,
+        "image": "Placeholder.png",
+        "miniature": "Mist cloak miniature.png",
+        "spell": true,
+        "normal spell": true,
+        "invisibility": true
+    },
+    {
+        "name": "Mist",
+        "id": 63,
+        "image": "Placeholder.png",
+        "miniature": "Mist miniature.png",
+        "spell": true,
+        "area spell": true,
+        "invisibility": true
+    },
+    {
+        "name": "Psychic storm",
+        "id": 64,
+        "image": "Placeholder.png",
+        "miniature": "Psychic storm miniature.png",
+        "spell": true,
+        "normal spell": true,
+        "damaging": true,
+        "psychic": true
+    },
+    {
+        "name": "Recovery",
+        "id": 65,
+        "image": "Placeholder.png",
+        "miniature": "Recovery miniature.png",
+        "spell": true,
+        "normal spell": true,
+        "healing": true,
+        "remove debuffs": true
+    },
+    {
+        "name": "Reform",
+        "id": 66,
+        "image": "Placeholder.png",
+        "miniature": "Reform miniature.png",
+        "spell": true,
+        "area spell": true,
+        "healing": true,
+        "remove debuffs": true
+    },
+    {
+        "name": "Reneval",
+        "id": 67,
+        "image": "Placeholder.png",
+        "miniature": "Reneval miniature.png",
+        "spell": true,
+        "area spell": true,
+        "healing": true,
+        "remove debuffs": true
+    },
+    {
+        "name": "Revival",
+        "id": 68,
+        "image": "Placeholder.png",
+        "miniature": "Revival miniature.png",
+        "spell": true,
+        "area spell": true,
+        "revival": true
+    },
+    {
+        "name": "Sandstorm",
+        "id": 69,
+        "image": "Placeholder.png",
+        "miniature": "Sandstorm miniature.png",
+        "spell": true,
+        "area spell": true,
+        "defense down": true
+    },
+    {
+        "name": "Storm",
+        "id": 70,
+        "image": "Placeholder.png",
+        "miniature": "Storm miniature.png",
+        "spell": true,
+        "area spell": true
+    },
+    {
+        "name": "Thunderstorm",
+        "id": 71,
+        "image": "Placeholder.png",
+        "miniature": "Thunderstorm miniature.png",
+        "spell": true,
+        "area spell": true,
+        "damaging": true
     }
 ]

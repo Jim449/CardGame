@@ -13,7 +13,7 @@ import transitions
 
 
 class Game():
-    def __init__(self, root, player: int = 1, observer: int = 1):
+    def __init__(self, root, deck_1: Deck, deck_2: Deck, player: int = 1, observer: int = 1):
         self.player: int = player
         self.observer: int = observer
         self.root = root
@@ -49,8 +49,8 @@ class Game():
         self.hand_2: Deck = Deck(Card.FACE_DOWN, 6)
         self.field_1: Field = Field(Card.FLEXIBLE, 6)
         self.field_2: Field = Field(Card.FLEXIBLE, 6)
-        self.deck_1: Deck = Deck(Card.HIDDEN)
-        self.deck_2: Deck = Deck(Card.HIDDEN)
+        self.deck_1: Deck = deck_1
+        self.deck_2: Deck = deck_2
         self.discard_1: Deck = Deck(Card.FACE_UP)
         self.discard_2: Deck = Deck(Card.FACE_UP)
         self.active_1: Field = Field(Card.FLEXIBLE, 1)
@@ -243,6 +243,16 @@ class Game():
             self.deck_2.add_card(remains.give_to(2))
             self.deck_2.add_card(drowned.give_to(2))
 
+        self.deck_1.shuffle()
+        self.deck_2.shuffle()
+        self.deck_gui_1.update(self.observer)
+        self.deck_gui_2.update(self.observer)
+        transitions.draw(origin=self.deck_1, destination=self.hand_1, amount=6)
+        transitions.draw(origin=self.deck_2, destination=self.hand_2, amount=5)
+        self.hand_gui_1.update(self.observer)
+        self.hand_gui_2.update(self.observer)
+
+    def start_game(self) -> None:
         self.deck_1.shuffle()
         self.deck_2.shuffle()
         self.deck_gui_1.update(self.observer)

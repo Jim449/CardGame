@@ -1,6 +1,10 @@
 import tkinter
 import json
+import random
 from game import Game
+from collection import Collection
+from deck import Deck
+from card import Card
 
 
 class Main():
@@ -8,9 +12,11 @@ class Main():
         self.root: tkinter.Tk = tkinter.Tk()
         self.root.geometry("960x640+160+0")
         self.root.resizable(False, False)
+        self.card_list: Collection = Collection()
 
     def start_test_game(self):
-        game = Game(self.root, 1, 1)
+        """Starts a test game"""
+        game = Game(self.root, Deck(Card.HIDDEN), Deck(Card.HIDDEN), 1, 1)
         game.test_setup()
 
     # Save to json file.
@@ -65,8 +71,8 @@ class Main():
         card_list.append({"name": "Dust spirit", "id": 12,
                          "image": "Placeholder.png", "miniature": "Dust spirit miniature.png",
                           "earth": True, "ghost": True, "spirit": True, "prevent healing": True})
-        card_list.append({"name": "Earth shrine", "id": 13,
-                         "image": "Placeholder.png", "miniature": "Earth shrine miniature.png",
+        card_list.append({"name": "Shrine of earth", "id": 13,
+                         "image": "Placeholder.png", "miniature": "Shrine of earth miniature.png",
                           "shrine": True})
         card_list.append({"name": "Dust dragon", "id": 14,
                          "image": "Placeholder.png", "miniature": "Dust dragon miniature.png",
@@ -81,8 +87,8 @@ class Main():
                          "image": "Placeholder.png", "miniature": "Bone dragon miniature.png",
                           "ghost": True, "divine": True, "avatar": True, "undead": True,
                           "resistance": True})
-        card_list.append({"name": "Black knight", "id": 18,
-                         "image": "Placeholder.png", "miniature": "Black knight miniature.png",
+        card_list.append({"name": "Death knight", "id": 18,
+                         "image": "Placeholder.png", "miniature": "Death knight miniature.png",
                           "ghost": True, "avatar": True, "undead": True, "instant death": True})
         card_list.append({"name": "Drowned soul", "id": 19,
                          "image": "Drowned soul.png", "miniature": "Drowned soul miniature.png",
@@ -136,8 +142,8 @@ class Main():
         card_list.append({"name": "Farseer", "id": 33,
                          "image": "Placeholder.png", "miniature": "Farseer miniature.png",
                           "divine": True, "spirit": True, "sure hit": True})
-        card_list.append({"name": "Fox spirit", "id": 34,
-                         "image": "Placeholder.png", "miniature": "Fox spirit miniature.png",
+        card_list.append({"name": "Spirit fox", "id": 34,
+                         "image": "Placeholder.png", "miniature": "Spirit fox miniature.png",
                           "divine": True, "spirit": True, "beast": True, "add faith": True})
         card_list.append({"name": "Scarab", "id": 35,
                          "image": "Placeholder.png", "miniature": "Scarab miniature.png",
@@ -219,12 +225,83 @@ class Main():
         card_list.append({"name": "Sand wyrm", "id": 57,
                          "image": "Placeholder.png", "miniature": "Sand wyrm miniature.png",
                           "earth": True, "void": True, "instant death": True, "defense up": True})
+        card_list.append({"name": "Blizzard", "id": 58,
+                          "image": "Placeholder.png", "miniature": "Blizzard miniature.png",
+                          "spell": True, "area spell": True, "attack down": True})
+        card_list.append({"name": "Flaming fields", "id": 59,
+                          "image": "Placeholder.png", "miniature": "Flaming fields miniature.png",
+                          "spell": True, "area spell": True, "damaging": True})
+        card_list.append({"name": "Hypnosis", "id": 60,
+                          "image": "Placeholder.png", "miniature": "Hypnosis miniature.png",
+                          "spell": True, "normal spell": True, "sleep": True})
+        card_list.append({"name": "Inferno", "id": 61,
+                          "image": "Placeholder.png", "miniature": "Inferno miniature.png",
+                          "spell": True, "normal spell": True, "damaging": True})
+        card_list.append({"name": "Mist cloak", "id": 62,
+                          "image": "Placeholder.png", "miniature": "Mist cloak miniature.png",
+                          "spell": True, "normal spell": True, "invisibility": True})
+        card_list.append({"name": "Mist", "id": 63,
+                          "image": "Placeholder.png", "miniature": "Mist miniature.png",
+                          "spell": True, "area spell": True, "invisibility": True})
+        card_list.append({"name": "Psychic storm", "id": 64,
+                          "image": "Placeholder.png", "miniature": "Psychic storm miniature.png",
+                          "spell": True, "normal spell": True, "damaging": True, "psychic": True})
+        card_list.append({"name": "Recovery", "id": 65,
+                          "image": "Placeholder.png", "miniature": "Recovery miniature.png",
+                          "spell": True, "normal spell": True, "healing": True, "remove debuffs": True})
+        card_list.append({"name": "Reform", "id": 66,
+                          "image": "Placeholder.png", "miniature": "Reform miniature.png",
+                          "spell": True, "area spell": True, "healing": True, "remove debuffs": True})
+        card_list.append({"name": "Reneval", "id": 67,
+                          "image": "Placeholder.png", "miniature": "Reneval miniature.png",
+                          "spell": True, "area spell": True, "healing": True, "remove debuffs": True})
+        card_list.append({"name": "Revival", "id": 68,
+                          "image": "Placeholder.png", "miniature": "Revival miniature.png",
+                          "spell": True, "area spell": True, "revival": True})
+        card_list.append({"name": "Sandstorm", "id": 69,
+                          "image": "Placeholder.png", "miniature": "Sandstorm miniature.png",
+                          "spell": True, "area spell": True, "defense down": True})
+        card_list.append({"name": "Storm", "id": 70,
+                          "image": "Placeholder.png", "miniature": "Storm miniature.png",
+                          "spell": True, "area spell": True})
+        card_list.append({"name": "Thunderstorm", "id": 71,
+                          "image": "Placeholder.png", "miniature": "Thunderstorm miniature.png",
+                          "spell": True, "area spell": True, "damaging": True})
 
         with open("Card info/Card info.json", "w") as file:
             json.dump(card_list, file)
 
+    def load_cards(self):
+        """Load cards from json files"""
+        with open("Card info/Card info.json", "r") as file:
+            data = json.load(file)
+
+            for info in data:
+                self.card_list.add_card(
+                    Card(id=info["id"], name=info["name"],
+                         image=tkinter.PhotoImage(
+                             file="Card images/" + info["image"]),
+                         miniature=tkinter.PhotoImage(
+                             file="Card miniatures/" + info["miniature"]),
+                         properties=info))
+
+    def construct_test_deck(self, player) -> Deck:
+        """Builds a random deck from the collection"""
+        deck = Deck(Card.HIDDEN)
+        size = self.card_list.get_size()
+
+        for x in range(30):
+            id = random.randrange(1, size + 1)
+            deck.add_card(self.card_list.get_card(id, player))
+
+        return deck
+
 
 if __name__ == "__main__":
     main = Main()
-    main.start_test_game()
+    main.load_cards()
+    deck_1 = main.construct_test_deck(1)
+    deck_2 = main.construct_test_deck(2)
+    game = Game(main.root, deck_1, deck_2)
+    game.start_game()
     main.root.mainloop()
