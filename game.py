@@ -158,6 +158,8 @@ class Game():
                                    command=lambda visibility=Card.FACE_UP: self.play_card(visibility))
         self.hand_menu.add_command(label="Set",
                                    command=lambda visibility=Card.FACE_DOWN: self.play_card(visibility))
+        self.hand_menu.add_command(label="Activate area",
+                                   command=lambda: self.move_card("Area"))
         self.hand_menu.add_command(label="Discard",
                                    command=lambda: self.move_card("Discard"))
         self.hand_menu.add_command(label="Equip", command=self.prepare_equip)
@@ -170,6 +172,8 @@ class Game():
 
         self.field_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
+        self.field_menu.add_command(
+            label="Switch in", command=self.switch_cards)
         self.field_menu.add_command(label="Destroy",
                                     command=lambda: self.move_card("Discard"))
         self.field_menu.add_command(label="Return to hand",
@@ -183,6 +187,13 @@ class Game():
         self.active_menu.add_command(label="Return to hand",
                                      command=lambda: self.move_card("Hand"))
         self.active_menu.add_command(label="Flip", command=self.flip_card)
+
+        self.area_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.area_menu.add_command(label="Destroy",
+                                   command=lambda: self.move_card("Discard"))
+        self.area_menu.add_command(label="Return to hand",
+                                   command=lambda: self.move_card("Hand"))
 
         self.deck_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -351,6 +362,10 @@ class Game():
         self.active_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
+    def show_area_menu(self) -> None:
+        self.area_menu.tk_popup(
+            self.root.winfo_pointerx(), self.root.winfo_pointery())
+
     def click_deck(self, name: str, player: int) -> None:
         """Views the top card of a deck or discard pile and shows options for that deck."""
         self.selected_location = self.get_deck(name, player)
@@ -387,6 +402,8 @@ class Game():
                 self.show_field_menu()
             elif name == "Active":
                 self.show_active_menu()
+            elif name == "Area":
+                self.show_area_menu()
 
         elif self.selected_action == "Equip":
             self.equip_card(name, player, index)
@@ -436,6 +453,15 @@ class Game():
             transitions.discard_equips(
                 self.selected_card, self.discard_1, self.discard_2)
             self.update_all_gui(self.observer)
+
+    def switch_cards(self) -> None:
+        """Switches the selected card on the field with the active card"""
+        destination = self.get_deck("Active", self.selected_card.owner)
+        active_card = destination.remove_card(0)
+        transitions.move_card(origin=self.selected_location, index=self.selected_index,
+                              destination=destination)
+        self.selected_location.add_card(active_card)
+        self.update_all_gui(self.observer)
 
     def move_to_deck(self, position: str = "Shuffle"):
         """Moves a card to the deck.
