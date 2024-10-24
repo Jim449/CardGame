@@ -228,6 +228,19 @@ class Game():
         self.scrutinize_discard_menu.add_command(
             label="Shuffle into deck", command=lambda: self.move_to_deck("Shuffle"))
 
+        self.scrutinize_deck_menu = tkinter.Menu(
+            self.root, background="black", foreground="white")
+        self.scrutinize_deck_menu.add_command(
+            label="Add to hand", command=lambda: self.move_card("Hand"))
+        self.scrutinize_deck_menu.add_command(
+            label="Play", command=lambda: self.play_card(Card.FACE_UP))
+        self.scrutinize_deck_menu.add_command(
+            label="Discard", command=lambda: self.move_card("Discard"))
+        self.scrutinize_deck_menu.add_command(
+            label="Move to top", command=lambda: self.move_to_deck("Top"))
+        self.scrutinize_deck_menu.add_command(
+            label="Move bottom", command=lambda: self.move_to_deck("Bottom"))
+
         self.equip_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
         self.equip_menu.add_command(
@@ -322,7 +335,8 @@ class Game():
 
         Args:
             name:
-                'Deck', 'Discard', 'Hand', 'Field', 'Active', 'Area', 'ScrutinizeDeck' or 'ScrutinizeDiscard'"""
+                'Deck', 'Discard', 'Hand', 'Field', 'Active', 'Area',
+                'ScrutinizeDeck' or 'ScrutinizeDiscard'"""
         if player is None:
             key = name
         else:
@@ -358,6 +372,10 @@ class Game():
 
     def show_discard_menu(self) -> None:
         self.discard_menu.tk_popup(
+            self.root.winfo_pointerx(), self.root.winfo_pointery())
+
+    def show_scrutinize_deck_menu(self) -> None:
+        self.scrutinize_deck_menu.tk_popup(
             self.root.winfo_pointerx(), self.root.winfo_pointery())
 
     def show_scrutinize_discard_menu(self) -> None:
@@ -428,13 +446,11 @@ class Game():
         self.selected_index = index
         self.selected_card = self.selected_location.get_card(index)
         self.view_card(self.selected_card, self.observer, show_hidden=True)
-        # TODO Maybe this will work for deck since deck and discard function pretty much the same
-        # It kind of works, except that some move-to-deck choices becomes nonsensical
-        # Moving a card to the first or last position is fine I guess, but shuffling into deck?
-        # Sure, it shuffles the deck just fine, but what's the point if I see where all the cards are?
-        # What if I want to add an option to discard a card?
-        # That would certainly not make sense in the discard pile, no excuses there
-        self.show_scrutinize_discard_menu()
+
+        if name == "Deck":
+            self.show_scrutinize_deck_menu()
+        else:
+            self.show_scrutinize_discard_menu()
 
     def select_equip(self, index: int) -> None:
         """Selects a card equipped to another card"""
