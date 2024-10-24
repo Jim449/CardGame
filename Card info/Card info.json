@@ -663,9 +663,8 @@
         "image": "Placeholder.png",
         "miniature": "Reneval miniature.png",
         "spell": true,
-        "area spell": true,
-        "healing": true,
-        "remove debuffs": true
+        "normal spell": true,
+        "revival": true
     },
     {
         "name": "Revival",
@@ -673,7 +672,7 @@
         "image": "Placeholder.png",
         "miniature": "Revival miniature.png",
         "spell": true,
-        "area spell": true,
+        "normal spell": true,
         "revival": true
     },
     {
@@ -699,7 +698,7 @@
         "image": "Placeholder.png",
         "miniature": "Thunderstorm miniature.png",
         "spell": true,
-        "area spell": true,
+        "normal spell": true,
         "damaging": true
     }
 ]

@@ -21,7 +21,7 @@ class DetailsGUI():
             button["state"] = tkinter.DISABLED
             self.equips.append(button)
 
-    def view_card(self, card: Card, observer: int):
+    def view_card(self, card: Card, observer: int, show_hidden: bool = False):
         if card is None:
             self.card_label.config(image=self.empty_card)
 
@@ -29,7 +29,8 @@ class DetailsGUI():
                 equip.config(image=self.empty_miniature)
                 equip["state"] = tkinter.NORMAL
         else:
-            self.card_label.config(image=card.get_image(observer))
+            self.card_label.config(image=card.get_image(
+                observer, show_hidden=show_hidden))
             equip_list = card.get_equips()
 
             for i in range(self.size):

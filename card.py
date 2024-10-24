@@ -55,13 +55,22 @@ class Card:
     def is_facedown(self):
         return self.visibility == Card.FACE_DOWN or self.visibility == Card.HIDDEN
 
-    def can_view(self, observer: int, hide_face_down: bool = False) -> bool:
-        """Returns true if the observer is authorized to view card front"""
+    def can_view(self, observer: int, hide_face_down: bool = False, show_hidden: bool = False) -> bool:
+        """Returns true if the observer is authorized to view card front.
+
+        FACE UP: card can be viewed by anyone
+
+        FACE DOWN: card can be viewed by owner. If hide_face_down is true, card cannot be viewed at all
+
+        HIDDEN: card cannot be viewed at all. If show_hidden is true, card can be viewed by owner
+        """
         if self.visibility == Card.FACE_DOWN and hide_face_down:
             return False
         elif self.visibility == Card.FACE_UP or observer == Card.ALL_SEEING:
             return True
         elif self.visibility == Card.FACE_DOWN and observer == self.owner:
+            return True
+        elif self.visibility == Card.HIDDEN and show_hidden and observer == self.owner:
             return True
         else:
             return False
@@ -74,18 +83,18 @@ class Card:
         else:
             return "Unknown card"
 
-    def get_image(self, observer: int, hide_face_down: bool = False) -> PhotoImage:
+    def get_image(self, observer: int, hide_face_down: bool = False, show_hidden: bool = False) -> PhotoImage:
         """Returns card front if observer has sufficient permissions.
         Otherwise, returns card back."""
-        if self.can_view(observer, hide_face_down):
+        if self.can_view(observer, hide_face_down, show_hidden):
             return self.image
         else:
             return self.back_image
 
-    def get_miniature(self, observer: int, hide_face_down: bool = False) -> PhotoImage:
+    def get_miniature(self, observer: int, hide_face_down: bool = False, show_hidden: bool = False) -> PhotoImage:
         """Returns miniature card front if observer has sufficient permissions.
         Otherwise, returns miniature card back."""
-        if self.can_view(observer, hide_face_down):
+        if self.can_view(observer, hide_face_down, show_hidden):
             return self.miniature
         else:
             return self.back_miniature

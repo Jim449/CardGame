@@ -112,12 +112,20 @@ class Game():
             self, self.root, name="Discard", player=2, empty_card=self.empty_miniature,
             deck=self.discard_2)
 
+        self.scrutinize_deck_1: DeckScrutinizeGUI = DeckScrutinizeGUI(
+            self, self.root, name="Deck", player=1, empty_card=self.empty_miniature,
+            deck=self.deck_1)
+        self.scrutinize_deck_2: DeckScrutinizeGUI = DeckScrutinizeGUI(
+            self, self.root, name="Deck", player=2, empty_card=self.empty_miniature,
+            deck=self.deck_2)
+
         self.all_guis: BaseGUI = {
             "Hand1": self.hand_gui_1, "Hand2": self.hand_gui_2, "Field1": self.field_gui_1,
             "Field2": self.field_gui_2, "Deck1": self.deck_gui_1, "Deck2": self.deck_gui_2,
             "Discard1": self.discard_gui_1, "Discard2": self.discard_gui_2, "Active1": self.active_gui_1,
             "Active2": self.active_gui_2, "Area1": self.area_gui_1, "Area2": self.area_gui_2,
-            "Scrutinize1": self.scrutinize_discard_1, "Scrutinize2": self.scrutinize_discard_2}
+            "ScrutinizeDiscard1": self.scrutinize_discard_1, "ScrutinizeDiscard2": self.scrutinize_discard_2,
+            "ScrutinizeDeck1": self.scrutinize_deck_1, "ScrutinizeDeck2": self.scrutinize_deck_2}
 
         self.details_frame: ttk.Frame = ttk.Frame(
             self.root, width=290, height=480)
@@ -199,11 +207,13 @@ class Game():
             self.root, background="black", foreground="white")
         self.deck_menu.add_command(label="Draw", command=self.draw_card)
         self.deck_menu.add_command(label="Shuffle", command=self.shuffle_deck)
+        self.deck_menu.add_command(
+            label="Check", command=lambda: self.check_deck("ScrutinizeDeck"))
 
         self.discard_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
         self.discard_menu.add_command(
-            label="Check", command=self.check_discard)
+            label="Check", command=lambda: self.check_deck("ScrutinizeDiscard"))
 
         self.scrutinize_discard_menu = tkinter.Menu(
             self.root, background="black", foreground="white")
@@ -312,7 +322,7 @@ class Game():
 
         Args:
             name:
-                'Deck', 'Discard', 'Hand', 'Field', 'Active', 'Area' or 'Scrutinize'"""
+                'Deck', 'Discard', 'Hand', 'Field', 'Active', 'Area', 'ScrutinizeDeck' or 'ScrutinizeDiscard'"""
         if player is None:
             key = name
         else:
@@ -324,10 +334,10 @@ class Game():
         for gui in self.all_guis.values():
             gui.update(observer)
 
-    def view_card(self, card: Card, observer: int) -> None:
+    def view_card(self, card: Card, observer: int, show_hidden: bool = False) -> None:
         """Views the full size image of a card. Depending on visibility and observer,
         views the card back. Views equipped cards. If card is none, views the empty card image."""
-        self.details_gui.view_card(card, observer)
+        self.details_gui.view_card(card, observer, show_hidden)
 
     def view_equip(self, card: Card, observer: int) -> None:
         """Views the full size image of an equip card. Depending on visibility and observer,
@@ -417,8 +427,13 @@ class Game():
         self.selected_location = self.get_deck(name, player)
         self.selected_index = index
         self.selected_card = self.selected_location.get_card(index)
-        self.selected_gui = self.get_gui("Scrutinize", player)
-        self.view_card(self.selected_card, self.observer)
+        self.view_card(self.selected_card, self.observer, show_hidden=True)
+        # TODO Maybe this will work for deck since deck and discard function pretty much the same
+        # It kind of works, except that some move-to-deck choices becomes nonsensical
+        # Moving a card to the first or last position is fine I guess, but shuffling into deck?
+        # Sure, it shuffles the deck just fine, but what's the point if I see where all the cards are?
+        # What if I want to add an option to discard a card?
+        # That would certainly not make sense in the discard pile, no excuses there
         self.show_scrutinize_discard_menu()
 
     def select_equip(self, index: int) -> None:
@@ -427,9 +442,10 @@ class Game():
         self.details_gui.view_equip(self.selected_equip, self.observer)
         self.show_equip_menu()
 
-    def check_discard(self) -> None:
-        self.get_gui("Scrutinize", self.selected_card.owner).activate(
-            self.observer)
+    def check_deck(self, name: str) -> None:
+        """Opens a full view of a deck or discard pile"""
+        self.selected_gui = self.get_gui(name, self.selected_card.owner)
+        self.selected_gui.activate(self.observer)
 
     def play_card(self, visibility: int) -> None:
         """Moves a card to the field as either face-up or face-down.
@@ -479,7 +495,7 @@ class Game():
                                      target_index=0)
         else:
             transitions.move_to_deck(self.selected_location, self.selected_index, destination,
-                                     shuffle=True)
+                                     target_index=0, shuffle=True)
         self.update_all_gui(self.observer)
 
     def shuffle_deck(self):

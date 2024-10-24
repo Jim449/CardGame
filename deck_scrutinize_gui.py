@@ -37,7 +37,7 @@ class DeckScrutinizeGUI(BaseGUI):
 
             if card is not None:
                 self.content[index].config(
-                    image=card.get_miniature(observer))
+                    image=card.get_miniature(observer, show_hidden=True))
                 self.content[index]["state"] = tkinter.NORMAL
             else:
                 self.content[index].config(image=self.empty_card, text="")
