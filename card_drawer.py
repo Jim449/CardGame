@@ -29,11 +29,6 @@ class CardDrawer():
         self.details_spacing = 5
         self.details_height = 17
         self.ability_height = 40
-        # 32 + 2*21 = 74
-        # 32 + 21 = 53
-
-        # 40 + 17 = 57
-        # 40 + 2*17 = 74
 
         self.flavour_x = 12
         self.flavour_y = 308
@@ -67,7 +62,7 @@ class CardDrawer():
                    font=self.ability_font)
 
     def draw_ability(self, image: ImageDraw, ability: str, ability_attr: str,
-                     ability_details: str, ability_value: str = "", spacing: int = 0):
+                     ability_details: str = "", ability_value: str = "", spacing: int = 0):
         if spacing > 0:
             pushdown = self.ability_height + spacing * self.details_height
         else:
@@ -99,18 +94,31 @@ class CardDrawer():
     def create_images(self):
         with Image.open("Template empty.png") as image:
             new_image = image.copy()
+            draw = ImageDraw.Draw(new_image)
+            self.draw_long_header(draw, "DEATH\nKNIGHT")
+            self.draw_ability(draw, "EXCECUTION", "infused ghost technique",
+                              ability_details="Inflicts instant death", ability_value="8")
+            self.draw_ability(draw, "WEAKNESS", "ghost spell",
+                              ability_details="Decreases attack by 1",
+                              ability_value="", spacing=1)
+            self.draw_footer(draw, "undead",
+                             "GHOST", "8 HP")
+            self.add_flavour(draw, "The incarnation\nof death")
+            new_image.save("Card images/Death knight.png")
 
-        draw = ImageDraw.Draw(new_image)
-        self.draw_long_header(draw, "MUFFIN\nMUNCHER")
-        self.draw_ability(draw, "MUFFIN PUNCH", "physical technique",
-                          "Very spongy\nTastes good", ability_value="5")
-        self.draw_ability(draw, "MUFFIN BODY", "passive", "Absorbs blows",
-                          spacing=2)
-        self.draw_footer(draw, "muffin", "NORMAL", "5 HP")
-        self.add_flavour(draw,
-                         "You thought it was a man\nBut it was a muffin!")
-        new_image.show()
-        new_image.save("Card images/Muffin man.png")
+            new_image = image.copy()
+            draw = ImageDraw.Draw(new_image)
+            self.draw_header(draw, "DEMON")
+            self.draw_ability(draw, "FIRE BLADE", "infused fire technique",
+                              ability_details="Strikes with a fiery sword", ability_value="4")
+            self.draw_ability(draw, "DEMON PORTAL", "void spell",
+                              ability_details="Switches this unit\nin or out",
+                              ability_value="", spacing=1)
+            self.draw_footer(
+                draw, "demonic", "VOID, FIRE", "8 HP")
+            self.add_flavour(
+                draw, "A powerful force\nof evil")
+            new_image.save("Card images/Demon.png")
 
 
 if __name__ == "__main__":

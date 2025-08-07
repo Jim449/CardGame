@@ -27,11 +27,12 @@
     {
         "name": "Beholder",
         "id": 3,
-        "image": "Placeholder.png",
+        "image": "Beholder.png",
         "miniature": "Beholder miniature.png",
         "void": true,
         "spirit": true,
-        "strange mind": true
+        "strange mind": true,
+        "sharp senses": true
     },
     {
         "name": "Slime",
@@ -74,12 +75,13 @@
     {
         "name": "Demon",
         "id": 8,
-        "image": "Placeholder.png",
+        "image": "Demon.png",
         "miniature": "Demon miniature.png",
         "void": true,
         "fire": true,
         "avatar": true,
-        "regeneration": true
+        "demonic": true,
+        "switch": true
     },
     {
         "name": "Burning remains",
@@ -143,7 +145,7 @@
     {
         "name": "Behemoth",
         "id": 15,
-        "image": "Placeholder.png",
+        "image": "Behemoth.png",
         "miniature": "Behemoth miniature.png",
         "earth": true,
         "normal": true,
@@ -159,23 +161,26 @@
     {
         "name": "Bone dragon",
         "id": 17,
-        "image": "Placeholder.png",
+        "image": "Bone dragon.png",
         "miniature": "Bone dragon miniature.png",
         "ghost": true,
-        "divine": true,
         "avatar": true,
         "undead": true,
+        "dragon": true,
+        "remove buffs": true,
+        "defense down": true,
         "resistance": true
     },
     {
         "name": "Death knight",
         "id": 18,
-        "image": "Placeholder.png",
+        "image": "Death knight.png",
         "miniature": "Death knight miniature.png",
         "ghost": true,
         "avatar": true,
         "undead": true,
-        "instant death": true
+        "instant death": true,
+        "attack down": true
     },
     {
         "name": "Drowned soul",
@@ -204,7 +209,7 @@
     {
         "name": "Armadillo",
         "id": 21,
-        "image": "Placeholder.png",
+        "image": "Armadillo.png",
         "miniature": "Armadillo miniature.png",
         "normal": true,
         "earth": true,
@@ -302,22 +307,24 @@
     {
         "name": "Black dragon",
         "id": 31,
-        "image": "Placeholder.png",
+        "image": "Black dragon.png",
         "miniature": "Black dragon miniature.png",
         "fire": true,
         "divine": true,
         "avatar": true,
+        "dragon": true,
         "resistance": true
     },
     {
         "name": "Astral dragon",
         "id": 32,
-        "image": "Placeholder.png",
+        "image": "Astral dragon.png",
         "miniature": "Astral dragon miniature.png",
         "ghost": true,
         "divine": true,
         "avatar": true,
         "resistance": true,
+        "dragon": true,
         "psychic": true
     },
     {
@@ -473,7 +480,7 @@
     {
         "name": "Basilisk",
         "id": 48,
-        "image": "Placeholder.png",
+        "image": "Basilisk.png",
         "miniature": "Basilisk miniature.png",
         "poison": true,
         "avatar": true,
@@ -576,7 +583,7 @@
     {
         "name": "Blizzard",
         "id": 58,
-        "image": "Placeholder.png",
+        "image": "Blizzard.png",
         "miniature": "Blizzard miniature.png",
         "spell": true,
         "area spell": true,
